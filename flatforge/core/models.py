@@ -1,7 +1,7 @@
 """
-Core data models for FlatMagic.
+Core data models for FlatForge.
 
-This module contains the data models used throughout the FlatMagic library.
+This module contains the data models used throughout the FlatForge library.
 """
 from dataclasses import dataclass, field
 from enum import Enum

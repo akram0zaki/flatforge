@@ -97,28 +97,28 @@ mkdir -p samples/output
 echo "Running validation tests..."
 
 # Employee data tests
-flatmagic validate --config samples/config/employee_fixed_length.yaml --input samples/input/employee_data.txt --output samples/output/employee_data_valid.txt --errors samples/output/employee_data_errors.txt
-flatmagic validate --config samples/config/employee_fixed_length_no_identifier.yaml --input samples/input/employee_data_no_identifier.txt --output samples/output/employee_data_no_identifier_valid.txt --errors samples/output/employee_data_no_identifier_errors.txt
-flatmagic validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/employee_data_valid.csv --errors samples/output/employee_data_errors.csv
-flatmagic validate --config samples/config/employee_csv_no_identifier.yaml --input samples/input/employee_data_no_identifier.csv --output samples/output/employee_data_no_identifier_valid.csv --errors samples/output/employee_data_no_identifier_errors.csv
+flatforge validate --config samples/config/employee_fixed_length.yaml --input samples/input/employee_data.txt --output samples/output/employee_data_valid.txt --errors samples/output/employee_data_errors.txt
+flatforge validate --config samples/config/employee_fixed_length_no_identifier.yaml --input samples/input/employee_data_no_identifier.txt --output samples/output/employee_data_no_identifier_valid.txt --errors samples/output/employee_data_no_identifier_errors.txt
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/employee_data_valid.csv --errors samples/output/employee_data_errors.csv
+flatforge validate --config samples/config/employee_csv_no_identifier.yaml --input samples/input/employee_data_no_identifier.csv --output samples/output/employee_data_no_identifier_valid.csv --errors samples/output/employee_data_no_identifier_errors.csv
 
 # Transformation tests
-flatmagic validate --config samples/config/transformation_rules_fixed_length.yaml --input samples/input/transformation_test_fixed_length.txt --output samples/output/transformation_test_fixed_length_valid.txt --errors samples/output/transformation_test_fixed_length_errors.txt
-flatmagic validate --config samples/config/transformation_rules_test.yaml --input samples/input/transformation_test_input.csv --output samples/output/transformation_test_valid.csv --errors samples/output/transformation_test_errors.csv
+flatforge validate --config samples/config/transformation_rules_fixed_length.yaml --input samples/input/transformation_test_fixed_length.txt --output samples/output/transformation_test_fixed_length_valid.txt --errors samples/output/transformation_test_fixed_length_errors.txt
+flatforge validate --config samples/config/transformation_rules_test.yaml --input samples/input/transformation_test_input.csv --output samples/output/transformation_test_valid.csv --errors samples/output/transformation_test_errors.csv
 
 # Conversion tests
 echo "Running conversion tests..."
-flatmagic convert --input-config samples/config/employee_csv.yaml --output-config samples/config/employee_fixed_length.yaml --input samples/input/employee_data.csv --output samples/output/employee_data_converted.txt --errors samples/output/employee_data_conversion_errors.txt
-flatmagic convert --input-config samples/config/employee_fixed_length.yaml --output-config samples/config/employee_csv.yaml --input samples/input/employee_data.txt --output samples/output/employee_data_converted.csv --errors samples/output/employee_data_conversion_errors.csv
-flatmagic convert --input-config samples/config/transformation_rules_test.yaml --output-config samples/config/transformation_rules_fixed_length.yaml --input samples/input/transformation_test_input.csv --output samples/output/transformation_test_converted.txt --errors samples/output/transformation_test_conversion_errors.txt
-flatmagic convert --input-config samples/config/transformation_rules_fixed_length.yaml --output-config samples/config/transformation_rules_test.yaml --input samples/input/transformation_test_fixed_length.txt --output samples/output/transformation_test_converted.csv --errors samples/output/transformation_test_conversion_errors.csv
+flatforge convert --input-config samples/config/employee_csv.yaml --output-config samples/config/employee_fixed_length.yaml --input samples/input/employee_data.csv --output samples/output/employee_data_converted.txt --errors samples/output/employee_data_conversion_errors.txt
+flatforge convert --input-config samples/config/employee_fixed_length.yaml --output-config samples/config/employee_csv.yaml --input samples/input/employee_data.txt --output samples/output/employee_data_converted.csv --errors samples/output/employee_data_conversion_errors.csv
+flatforge convert --input-config samples/config/transformation_rules_test.yaml --output-config samples/config/transformation_rules_fixed_length.yaml --input samples/input/transformation_test_input.csv --output samples/output/transformation_test_converted.txt --errors samples/output/transformation_test_conversion_errors.txt
+flatforge convert --input-config samples/config/transformation_rules_fixed_length.yaml --output-config samples/config/transformation_rules_test.yaml --input samples/input/transformation_test_fixed_length.txt --output samples/output/transformation_test_converted.csv --errors samples/output/transformation_test_conversion_errors.csv
 
 # Counting tests
 echo "Running counting tests..."
-flatmagic count --config samples/config/employee_fixed_length.yaml --input samples/input/employee_data.txt --output samples/output/employee_data_counts.txt
-flatmagic count --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/employee_data_counts.txt
-flatmagic count --config samples/config/transformation_rules_fixed_length.yaml --input samples/input/transformation_test_fixed_length.txt --output samples/output/transformation_test_fixed_length_counts.txt
-flatmagic count --config samples/config/transformation_rules_test.yaml --input samples/input/transformation_test_input.csv --output samples/output/transformation_test_counts.txt
+flatforge count --config samples/config/employee_fixed_length.yaml --input samples/input/employee_data.txt --output samples/output/employee_data_counts.txt
+flatforge count --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/employee_data_counts.txt
+flatforge count --config samples/config/transformation_rules_fixed_length.yaml --input samples/input/transformation_test_fixed_length.txt --output samples/output/transformation_test_fixed_length_counts.txt
+flatforge count --config samples/config/transformation_rules_test.yaml --input samples/input/transformation_test_input.csv --output samples/output/transformation_test_counts.txt
 
 # Run the Python test script
 echo "Running Python test script..."
@@ -138,28 +138,28 @@ REM Validation tests
 echo Running validation tests...
 
 REM Employee data tests
-flatmagic validate --config samples\config\employee_fixed_length.yaml --input samples\input\employee_data.txt --output samples\output\employee_data_valid.txt --errors samples\output\employee_data_errors.txt
-flatmagic validate --config samples\config\employee_fixed_length_no_identifier.yaml --input samples\input\employee_data_no_identifier.txt --output samples\output\employee_data_no_identifier_valid.txt --errors samples\output\employee_data_no_identifier_errors.txt
-flatmagic validate --config samples\config\employee_csv.yaml --input samples\input\employee_data.csv --output samples\output\employee_data_valid.csv --errors samples\output\employee_data_errors.csv
-flatmagic validate --config samples\config\employee_csv_no_identifier.yaml --input samples\input\employee_data_no_identifier.csv --output samples\output\employee_data_no_identifier_valid.csv --errors samples\output\employee_data_no_identifier_errors.csv
+flatforge validate --config samples\config\employee_fixed_length.yaml --input samples\input\employee_data.txt --output samples\output\employee_data_valid.txt --errors samples\output\employee_data_errors.txt
+flatforge validate --config samples\config\employee_fixed_length_no_identifier.yaml --input samples\input\employee_data_no_identifier.txt --output samples\output\employee_data_no_identifier_valid.txt --errors samples\output\employee_data_no_identifier_errors.txt
+flatforge validate --config samples\config\employee_csv.yaml --input samples\input\employee_data.csv --output samples\output\employee_data_valid.csv --errors samples\output\employee_data_errors.csv
+flatforge validate --config samples\config\employee_csv_no_identifier.yaml --input samples\input\employee_data_no_identifier.csv --output samples\output\employee_data_no_identifier_valid.csv --errors samples\output\employee_data_no_identifier_errors.csv
 
 REM Transformation tests
-flatmagic validate --config samples\config\transformation_rules_fixed_length.yaml --input samples\input\transformation_test_fixed_length.txt --output samples\output\transformation_test_fixed_length_valid.txt --errors samples\output\transformation_test_fixed_length_errors.txt
-flatmagic validate --config samples\config\transformation_rules_test.yaml --input samples\input\transformation_test_input.csv --output samples\output\transformation_test_valid.csv --errors samples\output\transformation_test_errors.csv
+flatforge validate --config samples\config\transformation_rules_fixed_length.yaml --input samples\input\transformation_test_fixed_length.txt --output samples\output\transformation_test_fixed_length_valid.txt --errors samples\output\transformation_test_fixed_length_errors.txt
+flatforge validate --config samples\config\transformation_rules_test.yaml --input samples\input\transformation_test_input.csv --output samples\output\transformation_test_valid.csv --errors samples\output\transformation_test_errors.csv
 
 REM Conversion tests
 echo Running conversion tests...
-flatmagic convert --input-config samples\config\employee_csv.yaml --output-config samples\config\employee_fixed_length.yaml --input samples\input\employee_data.csv --output samples\output\employee_data_converted.txt --errors samples\output\employee_data_conversion_errors.txt
-flatmagic convert --input-config samples\config\employee_fixed_length.yaml --output-config samples\config\employee_csv.yaml --input samples\input\employee_data.txt --output samples\output\employee_data_converted.csv --errors samples\output\employee_data_conversion_errors.csv
-flatmagic convert --input-config samples\config\transformation_rules_test.yaml --output-config samples\config\transformation_rules_fixed_length.yaml --input samples\input\transformation_test_input.csv --output samples\output\transformation_test_converted.txt --errors samples\output\transformation_test_conversion_errors.txt
-flatmagic convert --input-config samples\config\transformation_rules_fixed_length.yaml --output-config samples\config\transformation_rules_test.yaml --input samples\input\transformation_test_fixed_length.txt --output samples\output\transformation_test_converted.csv --errors samples\output\transformation_test_conversion_errors.csv
+flatforge convert --input-config samples\config\employee_csv.yaml --output-config samples\config\employee_fixed_length.yaml --input samples\input\employee_data.csv --output samples\output\employee_data_converted.txt --errors samples\output\employee_data_conversion_errors.txt
+flatforge convert --input-config samples\config\employee_fixed_length.yaml --output-config samples\config\employee_csv.yaml --input samples\input\employee_data.txt --output samples\output\employee_data_converted.csv --errors samples\output\employee_data_conversion_errors.csv
+flatforge convert --input-config samples\config\transformation_rules_test.yaml --output-config samples\config\transformation_rules_fixed_length.yaml --input samples\input\transformation_test_input.csv --output samples\output\transformation_test_converted.txt --errors samples\output\transformation_test_conversion_errors.txt
+flatforge convert --input-config samples\config\transformation_rules_fixed_length.yaml --output-config samples\config\transformation_rules_test.yaml --input samples\input\transformation_test_fixed_length.txt --output samples\output\transformation_test_converted.csv --errors samples\output\transformation_test_conversion_errors.csv
 
 REM Counting tests
 echo Running counting tests...
-flatmagic count --config samples\config\employee_fixed_length.yaml --input samples\input\employee_data.txt --output samples\output\employee_data_counts.txt
-flatmagic count --config samples\config\employee_csv.yaml --input samples\input\employee_data.csv --output samples\output\employee_data_counts.txt
-flatmagic count --config samples\config\transformation_rules_fixed_length.yaml --input samples\input\transformation_test_fixed_length.txt --output samples\output\transformation_test_fixed_length_counts.txt
-flatmagic count --config samples\config\transformation_rules_test.yaml --input samples\input\transformation_test_input.csv --output samples\output\transformation_test_counts.txt
+flatforge count --config samples\config\employee_fixed_length.yaml --input samples\input\employee_data.txt --output samples\output\employee_data_counts.txt
+flatforge count --config samples\config\employee_csv.yaml --input samples\input\employee_data.csv --output samples\output\employee_data_counts.txt
+flatforge count --config samples\config\transformation_rules_fixed_length.yaml --input samples\input\transformation_test_fixed_length.txt --output samples\output\transformation_test_fixed_length_counts.txt
+flatforge count --config samples\config\transformation_rules_test.yaml --input samples\input\transformation_test_input.csv --output samples\output\transformation_test_counts.txt
 
 REM Run the Python test script
 echo Running Python test script...
@@ -185,8 +185,8 @@ When running these tests, you should expect the following:
 If you encounter any issues when running these tests, check the following:
 
 1. Make sure all the required files exist in the correct locations.
-2. Check that the FlatMagic library is installed correctly.
+2. Check that the flatforge library is installed correctly.
 3. Verify that the configuration files are valid YAML or JSON.
 4. Check the error files for specific validation or conversion errors.
 
-For more detailed information about the FlatMagic CLI, refer to the [User Guide](README.md). 
+For more detailed information about the flatforge CLI, refer to the [User Guide](README.md). 

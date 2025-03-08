@@ -2,12 +2,12 @@ import click
 import sys
 import yaml
 from tqdm import tqdm
-from flatmagic.file_format import FileFormat
-from flatmagic.processor import ValidationProcessor, ConversionProcessor, CounterProcessor
+from flatforge.core import FileFormat
+from flatforge.processors import ValidationProcessor, ConversionProcessor, CounterProcessor
 
 @click.group()
 def cli():
-    """FlatMagic - A tool for working with flat files."""
+    """FlatForge - A tool for working with flat files."""
     pass
 
 @cli.command()

@@ -1,6 +1,6 @@
 # Transformation Rules
 
-FlatMagic provides a variety of transformation rules that can be applied to fields in a flat file. These rules allow you to modify field values before they are written to the output file.
+FlatForge provides a variety of transformation rules that can be applied to fields in a flat file. These rules allow you to modify field values before they are written to the output file.
 
 ## Available Transformation Rules
 
@@ -158,7 +158,7 @@ This will:
 
 ## Sample Files
 
-The FlatMagic repository includes sample files to demonstrate the use of transformation rules:
+The FlatForge repository includes sample files to demonstrate the use of transformation rules:
 
 - `samples/config/transformation_rules_test.yaml`: Configuration for testing transformation rules with delimited files
 - `samples/config/transformation_rules_fixed_length.yaml`: Configuration for testing transformation rules with fixed-length files

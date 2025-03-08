@@ -1,22 +1,22 @@
 """
-CLI main module for FlatMagic.
+CLI main module for FlatForge.
 
-This module contains the main CLI entry point for FlatMagic.
+This module contains the main CLI entry point for FlatForge.
 """
 import sys
 from typing import Optional
 
 import click
 
-from flatmagic.core import ConfigError, ProcessorError
-from flatmagic.parsers import ConfigParser
-from flatmagic.processors import ValidationProcessor, ConversionProcessor, CounterProcessor
+from flatforge.core import ConfigError, ProcessorError
+from flatforge.parsers import ConfigParser
+from flatforge.processors import ValidationProcessor, ConversionProcessor, CounterProcessor
 
 
 @click.group()
 @click.version_option()
 def main():
-    """FlatMagic - A library for validating and transforming flat files."""
+    """FlatForge - A library for validating and transforming flat files."""
     pass
 
 

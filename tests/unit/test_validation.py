@@ -163,7 +163,7 @@ sections:
         with open(self.error_path, 'r') as f:
             content = f.read()
             self.assertIn("Field is required", content)
-            self.assertIn("Value must be greater than or equal to 0", content)
+            self.assertIn("Value is less than minimum value", content)
 
 
 if __name__ == '__main__':

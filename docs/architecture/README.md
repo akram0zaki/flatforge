@@ -1,10 +1,10 @@
-# FlatMagic Architecture
+# FlatForge Architecture
 
-This document describes the architecture of FlatMagic, a library for validating and transforming flat files.
+This document describes the architecture of FlatForge, a library for validating and transforming flat files.
 
 ## Overview
 
-FlatMagic is designed with a modular architecture that separates concerns and allows for easy extension. The library is composed of several modules, each with a specific responsibility:
+FlatForge is designed with a modular architecture that separates concerns and allows for easy extension. The library is composed of several modules, each with a specific responsibility:
 
 - **Core**: Contains the core data models and exceptions
 - **Parsers**: Contains the parsers for configuration files and flat files
@@ -78,7 +78,7 @@ Key components:
 
 ### CLI
 
-The CLI module contains the command line interface for FlatMagic. It provides commands for validating, converting, and counting records in flat files.
+The CLI module contains the command line interface for FlatForge. It provides commands for validating, converting, and counting records in flat files.
 
 Key components:
 - `main`: Main CLI entry point
@@ -88,7 +88,7 @@ Key components:
 
 ## Design Patterns
 
-FlatMagic uses several design patterns to achieve its goals:
+FlatForge uses several design patterns to achieve its goals:
 
 ### Factory Pattern
 
@@ -165,7 +165,7 @@ class Processor(ABC):
 
 ## Workflow
 
-The typical workflow for using FlatMagic is as follows:
+The typical workflow for using FlatForge is as follows:
 
 1. Parse the configuration file to create a `FileFormat` object
 2. Create a processor for the file format
@@ -177,7 +177,7 @@ This workflow is encapsulated in the `process` method of the `Processor` class a
 
 ## Extension Points
 
-FlatMagic is designed to be extensible. The main extension points are:
+FlatForge is designed to be extensible. The main extension points are:
 
 - **Validation Rules**: Create custom validation rules by extending the `ValidationRule` class
 - **Transformation Rules**: Create custom transformation rules by extending the `TransformerRule` class
@@ -186,4 +186,4 @@ FlatMagic is designed to be extensible. The main extension points are:
 - **Parsers**: Create custom parsers by extending the `Parser` class
 - **Config Parsers**: Create custom config parsers by extending the `ConfigParser` class
 
-By extending these classes, you can add custom functionality to FlatMagic without modifying the core library. 
+By extending these classes, you can add custom functionality to FlatForge without modifying the core library. 

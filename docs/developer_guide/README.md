@@ -1,14 +1,14 @@
-# FlatMagic Developer Guide
+# FlatForge Developer Guide
 
-This guide explains how to use FlatMagic programmatically and how to extend it with custom rules and processors.
+This guide explains how to use FlatForge programmatically and how to extend it with custom rules and processors.
 
-## Using FlatMagic Programmatically
+## Using FlatForge Programmatically
 
 ### Validating a File
 
 ```python
-from flatmagic.parsers import ConfigParser
-from flatmagic.processors import ValidationProcessor
+from flatforge.parsers import ConfigParser
+from flatforge.processors import ValidationProcessor
 
 # Parse the configuration
 config_parser = ConfigParser.from_file("schema.yaml")
@@ -26,8 +26,8 @@ print(f"Valid records: {result.valid_records}")
 ### Converting a File
 
 ```python
-from flatmagic.parsers import ConfigParser
-from flatmagic.processors import ConversionProcessor
+from flatforge.parsers import ConfigParser
+from flatforge.processors import ConversionProcessor
 
 # Parse the configurations
 input_config_parser = ConfigParser.from_file("input_schema.yaml")
@@ -48,8 +48,8 @@ print(f"Valid records: {result.valid_records}")
 ### Counting Records
 
 ```python
-from flatmagic.parsers import ConfigParser
-from flatmagic.processors import CounterProcessor
+from flatforge.parsers import ConfigParser
+from flatforge.processors import CounterProcessor
 
 # Parse the configuration
 config_parser = ConfigParser.from_file("schema.yaml")
@@ -65,15 +65,15 @@ print(f"Valid records: {result.valid_records}")
 print(f"Error count: {result.error_count}")
 ```
 
-## Extending FlatMagic
+## Extending FlatForge
 
 ### Creating a Custom Validation Rule
 
 To create a custom validation rule, extend the `ValidationRule` class and implement the `validate` method:
 
 ```python
-from flatmagic.core import ValidationError, FieldValue, ParsedRecord
-from flatmagic.rules.base import ValidationRule
+from flatforge.core import ValidationError, FieldValue, ParsedRecord
+from flatforge.rules.base import ValidationRule
 
 class CustomValidationRule(ValidationRule):
     """A custom validation rule."""
@@ -111,8 +111,8 @@ class CustomValidationRule(ValidationRule):
 To create a custom transformation rule, extend the `TransformerRule` class and implement the `transform` method:
 
 ```python
-from flatmagic.core import FieldValue, ParsedRecord
-from flatmagic.rules.base import TransformerRule
+from flatforge.core import FieldValue, ParsedRecord
+from flatforge.rules.base import TransformerRule
 
 class CustomTransformerRule(TransformerRule):
     """A custom transformation rule."""
@@ -144,8 +144,8 @@ To create a custom global rule, extend the `GlobalRule` class and implement the 
 ```python
 from typing import List
 
-from flatmagic.core import ValidationError, ParsedRecord
-from flatmagic.rules.base import GlobalRule
+from flatforge.core import ValidationError, ParsedRecord
+from flatforge.rules.base import GlobalRule
 
 class CustomGlobalRule(GlobalRule):
     """A custom global rule."""
@@ -213,10 +213,10 @@ class CustomGlobalRule(GlobalRule):
 
 ### Registering Custom Rules
 
-To make your custom rules available to FlatMagic, register them in the rule registries:
+To make your custom rules available to FlatForge, register them in the rule registries:
 
 ```python
-from flatmagic.rules import VALIDATION_RULES, TRANSFORMER_RULES, GLOBAL_RULES
+from flatforge.rules import VALIDATION_RULES, TRANSFORMER_RULES, GLOBAL_RULES
 
 # Register custom validation rule
 VALIDATION_RULES["custom_validation"] = CustomValidationRule
@@ -235,9 +235,9 @@ To create a custom processor, extend the `Processor` class and implement the `pr
 ```python
 from typing import Optional
 
-from flatmagic.core import FileFormat, ProcessingResult, ProcessorError
-from flatmagic.parsers import Parser
-from flatmagic.processors.base import Processor
+from flatforge.core import FileFormat, ProcessingResult, ProcessorError
+from flatforge.parsers import Parser
+from flatforge.processors.base import Processor
 
 class CustomProcessor(Processor):
     """A custom processor."""
@@ -297,7 +297,7 @@ class CustomProcessor(Processor):
 
 ## Architecture
 
-FlatMagic is designed with a modular architecture that separates concerns and allows for easy extension.
+FlatForge is designed with a modular architecture that separates concerns and allows for easy extension.
 
 ### Core Components
 
@@ -309,7 +309,7 @@ FlatMagic is designed with a modular architecture that separates concerns and al
 
 ### Design Patterns
 
-FlatMagic uses several design patterns:
+FlatForge uses several design patterns:
 
 - **Factory Pattern**: Used to create parsers and rules based on configuration
 - **Strategy Pattern**: Used to implement different validation and transformation strategies
