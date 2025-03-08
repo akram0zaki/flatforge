@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-03-08
+
+### Fixed
+- Fixed documentation links in README.md to use absolute URLs for PyPI compatibility
+
+## [0.2.0] - 2025-03-08
+
 ### Added
 - Renamed library from FlatMagic to FlatForge
 - Chunked processing for large files (>1GB) with configurable chunk size
