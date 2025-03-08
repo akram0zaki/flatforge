@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-03-09
+
+### Fixed
+- Fixed CLI entry point in setup.py to ensure proper command execution
+- Resolved issue with FileFormat.from_yaml method in CLI implementation
+- Improved error handling in validation processor
+- Enhanced CLI output with more detailed processing statistics
+
 ## [0.2.1] - 2025-03-08
 
 ### Fixed

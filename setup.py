@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="flatforge",
-    version="0.2.1",
+    version="0.2.2",
     author="Akram Zaki",
     author_email="azpythonprojects@gmail.com",
     description="A library for validating and transforming flat files",
@@ -26,7 +26,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "flatforge=flatforge.cli:cli",
+            "flatforge=flatforge.cli.__init__:cli",
         ],
     },
 ) 
