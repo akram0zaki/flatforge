@@ -69,17 +69,17 @@ print(f"Processed {result.total_records} records with {result.error_count} error
 
 For detailed documentation, please refer to:
 
-- [User Guide](docs/user_guide/README.md): How to use FlatForge
-- [Developer Guide](docs/developer_guide/README.md): How to extend FlatForge
-- [Architecture](docs/architecture/README.md): Design and architecture of FlatForge
+- [User Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/user_guide/README.md): How to use FlatForge
+- [Developer Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/developer_guide/README.md): How to extend FlatForge
+- [Architecture](https://github.com/akram0zaki/flatforge/blob/master/docs/architecture/README.md): Design and architecture of FlatForge
 
 ## Changelog
 
-See the [CHANGELOG.md](CHANGELOG.md) file for details on the changes made in each release.
+See the [CHANGELOG.md](https://github.com/akram0zaki/flatforge/blob/master/CHANGELOG.md) file for details on the changes made in each release.
 
 ## Contributing
 
-Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute to this project.
+Contributions are welcome! Please see the [CONTRIBUTING.md](https://github.com/akram0zaki/flatforge/blob/master/CONTRIBUTING.md) file for guidelines on how to contribute to this project.
 
 ## Author
 
@@ -87,4 +87,4 @@ Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) fil
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/akram0zaki/flatforge/blob/master/LICENSE) file for details. 
