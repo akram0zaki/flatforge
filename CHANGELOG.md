@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Global rules system for validating relationships between records
+- Support for global rules that can alter field values (e.g., inserting calculated sums or counts)
+- New global rule types: Count, Sum, Checksum, and Uniqueness
+- Ability to validate uniqueness of fields or combinations of fields across records
+- Documentation for global rules in the user guide
+- Sample configuration and test script for global rules
+
+### Changed
+- Renamed `abort_after_n_errors` to `abort_after_n_failed_records` to better reflect its purpose
+- Updated validation processor to track failed records separately from error count
+- Modified abort logic to count failed records instead of individual errors
+- Added unit tests for the abort functionality
+
 ## [0.2.2] - 2025-03-09
 
 ### Fixed
