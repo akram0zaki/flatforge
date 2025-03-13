@@ -4,7 +4,7 @@ Global rules for FlatForge.
 This module contains the global rules for validating across multiple records.
 """
 import hashlib
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Set, Tuple
 
 from flatforge.core import ValidationError, ParsedRecord
 from flatforge.rules.base import GlobalRule
@@ -67,7 +67,7 @@ class CountRule(GlobalRule):
                 
         # Check if the count matches a field value
         count_field = self.params.get("count_field")
-        if count_field:
+        if count_field and not self.should_insert_value():
             section_name, field_name = count_field.split(".")
             # This would require access to the parsed records, which we don't have here
             # In a real implementation, we would need to store the parsed records
@@ -75,6 +75,15 @@ class CountRule(GlobalRule):
             pass
             
         return errors
+        
+    def calculate_value(self) -> Any:
+        """
+        Calculate the count value.
+        
+        Returns:
+            The count of records
+        """
+        return self.state["count"]
 
 
 class SumRule(GlobalRule):
@@ -154,7 +163,7 @@ class SumRule(GlobalRule):
                 
         # Check if the sum matches a field value
         sum_field = self.params.get("sum_field")
-        if sum_field:
+        if sum_field and not self.should_insert_value():
             section_name, field_name = sum_field.split(".")
             # This would require access to the parsed records, which we don't have here
             # In a real implementation, we would need to store the parsed records
@@ -162,6 +171,15 @@ class SumRule(GlobalRule):
             pass
             
         return errors
+        
+    def calculate_value(self) -> Any:
+        """
+        Calculate the sum value.
+        
+        Returns:
+            The sum of field values
+        """
+        return self.state["sum"]
 
 
 class ChecksumRule(GlobalRule):
@@ -225,6 +243,11 @@ class ChecksumRule(GlobalRule):
             except (ValueError, TypeError):
                 # Ignore non-numeric values
                 pass
+        elif checksum_type == "md5":
+            # MD5 hash (store as hex string)
+            if "checksum" not in self.state or self.state["checksum"] == 0:
+                self.state["checksum"] = hashlib.md5()
+            self.state["checksum"].update(value.encode())
     
     def finalize(self) -> List[ValidationError]:
         """
@@ -238,23 +261,170 @@ class ChecksumRule(GlobalRule):
         # Check if the checksum matches the expected checksum
         expected_checksum = self.params.get("expected_checksum")
         if expected_checksum is not None:
-            expected_checksum = int(expected_checksum)
-            actual_checksum = self.state["checksum"]
+            checksum_type = self.params.get("type", "sum")
             
-            if actual_checksum != expected_checksum:
-                errors.append(ValidationError(
-                    f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
-                    rule_name=self.name,
-                    error_code="CHECKSUM_MISMATCH"
-                ))
+            if checksum_type == "md5":
+                actual_checksum = self.state["checksum"].hexdigest()
+                if actual_checksum != expected_checksum:
+                    errors.append(ValidationError(
+                        f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
+                        rule_name=self.name,
+                        error_code="CHECKSUM_MISMATCH"
+                    ))
+            else:
+                expected_checksum = int(expected_checksum)
+                actual_checksum = self.state["checksum"]
+                
+                if actual_checksum != expected_checksum:
+                    errors.append(ValidationError(
+                        f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
+                        rule_name=self.name,
+                        error_code="CHECKSUM_MISMATCH"
+                    ))
                 
         # Check if the checksum matches a field value
         checksum_field = self.params.get("checksum_field")
-        if checksum_field:
+        if checksum_field and not self.should_insert_value():
             section_name, field_name = checksum_field.split(".")
             # This would require access to the parsed records, which we don't have here
             # In a real implementation, we would need to store the parsed records
             # or the specific field value in the state
             pass
             
+        return errors
+        
+    def calculate_value(self) -> Any:
+        """
+        Calculate the checksum value.
+        
+        Returns:
+            The calculated checksum
+        """
+        checksum_type = self.params.get("type", "sum")
+        if checksum_type == "md5":
+            return self.state["checksum"].hexdigest()
+        return self.state["checksum"]
+
+
+class UniquenessRule(GlobalRule):
+    """
+    Rule that validates the uniqueness of field values across records.
+    
+    This rule verifies that the values of specified fields are unique across
+    all records in a section.
+    """
+    
+    def __init__(self, name: str, params: Optional[dict] = None):
+        """
+        Initialize a UniquenessRule.
+        
+        Args:
+            name: The name of the rule
+            params: Optional parameters for the rule
+        """
+        super().__init__(name, params)
+        self.state = {
+            "values": set(),  # For single field uniqueness
+            "composite_values": set(),  # For composite field uniqueness
+            "duplicates": []  # To track duplicate records
+        }
+    
+    def process_record(self, record: ParsedRecord) -> None:
+        """
+        Process a record.
+        
+        Args:
+            record: The record to process
+        """
+        # Only check records from the specified section
+        section_name = self.params.get("section")
+        if section_name and record.section.name != section_name:
+            return
+            
+        # Get the field(s) to check for uniqueness
+        fields = self.params.get("fields")
+        if not fields:
+            return
+            
+        # Check if we're validating a single field or multiple fields
+        if isinstance(fields, str):
+            # Single field uniqueness
+            field_name = fields
+            field_value = record.field_values.get(field_name)
+            if not field_value:
+                return
+                
+            value = field_value.value.strip()
+            if value in self.state["values"]:
+                # Record the duplicate
+                self.state["duplicates"].append((record.record_number, field_name, value))
+                # Mark the record as invalid
+                record.is_valid = False
+                field_value.errors.append(ValidationError(
+                    f"Duplicate value: {value}",
+                    field_name=field_name,
+                    rule_name=self.name,
+                    error_code="DUPLICATE_VALUE",
+                    section_name=record.section.name,
+                    record_number=record.record_number,
+                    field_value=value
+                ))
+            else:
+                self.state["values"].add(value)
+        else:
+            # Composite field uniqueness
+            composite_value = []
+            for field_name in fields:
+                field_value = record.field_values.get(field_name)
+                if not field_value:
+                    return
+                composite_value.append(field_value.value.strip())
+                
+            # Convert to tuple for hashability
+            composite_tuple = tuple(composite_value)
+            if composite_tuple in self.state["composite_values"]:
+                # Record the duplicate
+                self.state["duplicates"].append((record.record_number, fields, composite_value))
+                # Mark the record as invalid
+                record.is_valid = False
+                for i, field_name in enumerate(fields):
+                    field_value = record.field_values.get(field_name)
+                    field_value.errors.append(ValidationError(
+                        f"Duplicate composite value: {composite_value}",
+                        field_name=field_name,
+                        rule_name=self.name,
+                        error_code="DUPLICATE_COMPOSITE_VALUE",
+                        section_name=record.section.name,
+                        record_number=record.record_number,
+                        field_value=field_value.value
+                    ))
+            else:
+                self.state["composite_values"].add(composite_tuple)
+    
+    def finalize(self) -> List[ValidationError]:
+        """
+        Finalize the rule.
+        
+        Returns:
+            A list of validation errors, if any
+        """
+        errors = []
+        
+        # Report any duplicates found
+        for record_number, field_name, value in self.state["duplicates"]:
+            if isinstance(field_name, str):
+                errors.append(ValidationError(
+                    f"Duplicate value in record {record_number}: {value}",
+                    field_name=field_name,
+                    rule_name=self.name,
+                    error_code="DUPLICATE_VALUE"
+                ))
+            else:
+                errors.append(ValidationError(
+                    f"Duplicate composite value in record {record_number}: {value}",
+                    field_name=",".join(field_name),
+                    rule_name=self.name,
+                    error_code="DUPLICATE_COMPOSITE_VALUE"
+                ))
+                
         return errors 

@@ -134,6 +134,11 @@ class GlobalRule(ABC):
     Abstract base class for global rules.
     
     A global rule is applied across all rows of the input flat file.
+    
+    Attributes:
+        name: The name of the rule
+        params: Parameters for the rule
+        state: State dictionary for storing rule-specific state
     """
     
     def __init__(self, name: str, params: Optional[Dict[str, Any]] = None):
@@ -170,4 +175,34 @@ class GlobalRule(ABC):
         Returns:
             A list of validation errors, if any
         """
-        pass 
+        pass
+        
+    def calculate_value(self) -> Any:
+        """
+        Calculate the value for this global rule.
+        
+        This method is called after all records have been processed to calculate
+        the final value for the rule (e.g., sum, count, checksum).
+        
+        Returns:
+            The calculated value
+        """
+        return None
+        
+    def should_insert_value(self) -> bool:
+        """
+        Determine if this rule should insert its calculated value.
+        
+        Returns:
+            True if the rule should insert its calculated value, False otherwise
+        """
+        return self.params.get("insert_value", False)
+        
+    def get_target_field(self) -> Optional[str]:
+        """
+        Get the target field for inserting the calculated value.
+        
+        Returns:
+            The target field in the format "section.field", or None if not specified
+        """
+        return self.params.get("target_field") 

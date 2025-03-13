@@ -11,7 +11,7 @@ from flatforge.rules.validation import (
 from flatforge.rules.transformation import (
     TrimRule, CaseRule, PadRule, DateFormatRule, SubstringRule, ReplaceRule
 )
-from flatforge.rules.global_rules import CountRule, SumRule, ChecksumRule
+from flatforge.rules.global_rules import CountRule, SumRule, ChecksumRule, UniquenessRule
 
 # Register validation rules
 VALIDATION_RULES = {
@@ -37,13 +37,14 @@ TRANSFORMER_RULES = {
 GLOBAL_RULES = {
     'count': CountRule,
     'sum': SumRule,
-    'checksum': ChecksumRule
+    'checksum': ChecksumRule,
+    'uniqueness': UniquenessRule
 }
 
 __all__ = [
     'Rule', 'ValidationRule', 'TransformerRule', 'GlobalRule',
     'RequiredRule', 'NumericRule', 'StringLengthRule', 'RegexRule', 'DateRule', 'ChoiceRule',
     'TrimRule', 'CaseRule', 'PadRule', 'DateFormatRule', 'SubstringRule', 'ReplaceRule',
-    'CountRule', 'SumRule', 'ChecksumRule',
+    'CountRule', 'SumRule', 'ChecksumRule', 'UniquenessRule',
     'VALIDATION_RULES', 'TRANSFORMER_RULES', 'GLOBAL_RULES'
 ] 

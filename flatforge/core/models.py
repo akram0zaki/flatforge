@@ -95,6 +95,7 @@ class FileFormat:
         encoding: The file encoding
         skip_blank_lines: Whether to skip blank lines
         exit_on_first_error: Whether to exit on the first error
+        abort_after_n_failed_records: Number of failed records after which to abort processing (-1 means process the whole file)
         description: Optional description of the file format
     """
     name: str
@@ -107,6 +108,7 @@ class FileFormat:
     encoding: str = "utf-8"
     skip_blank_lines: bool = True
     exit_on_first_error: bool = False
+    abort_after_n_failed_records: int = -1
     description: Optional[str] = None
 
 
@@ -154,10 +156,12 @@ class ProcessingResult:
     Attributes:
         total_records: Total number of records processed
         valid_records: Number of valid records
+        failed_records: Number of failed records
         error_count: Number of errors encountered
         errors: List of validation errors
     """
     total_records: int = 0
     valid_records: int = 0
+    failed_records: int = 0
     error_count: int = 0
     errors: List[Any] = field(default_factory=list) 
