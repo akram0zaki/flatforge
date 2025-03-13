@@ -172,11 +172,12 @@ A rule defines a validation or transformation to apply to a field with the follo
 
 ### Global Rules
 
-A global rule defines a validation that applies across all records in the file with the following properties:
+- `count`: Counts the number of records in a section
+- `sum`: Sums the values of a field across all records
+- `checksum`: Calculates a checksum of a field across all records
+- `uniqueness`: Validates that a field or combination of fields has unique values across all records
 
-- `type`: The type of rule
-- `name`: Optional name of the rule (defaults to the type)
-- `params`: Optional parameters for the rule
+For detailed information about global rules, see [Global Rules](global_rules.md).
 
 ## Example Configuration
 
@@ -365,6 +366,8 @@ global_rules:
 
 ## Available Rules
 
+FlatForge provides a wide range of rules for validating and transforming data. Here's a brief overview:
+
 ### Validation Rules
 
 - `required`: Validates that a field is not empty
@@ -383,10 +386,11 @@ global_rules:
 - `substring`: Extracts a substring from a field value
 - `replace`: Replaces text in a field value
 
-For detailed information about transformation rules, see [Transformation Rules](transformation_rules.md).
-
 ### Global Rules
 
 - `count`: Counts the number of records in a section
 - `sum`: Sums the values of a field across all records
-- `checksum`: Calculates a checksum of a field across all records 
+- `checksum`: Calculates a checksum of a field across all records
+- `uniqueness`: Validates that a field or combination of fields has unique values across all records
+
+For detailed information about all rules and their parameters, see the [Rules Guide](rules_guide.md). 
