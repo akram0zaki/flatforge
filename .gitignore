@@ -110,6 +110,7 @@ venv.bak/
 *.swo 
 
 # Other
+scrap/
 local.md
 prompt.md
 TODO.md

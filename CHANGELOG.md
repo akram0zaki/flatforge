@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Comprehensive testing documentation in the `docs/testing` directory
+  - Main testing guide with overview of testing infrastructure
+  - Detailed unit testing documentation with best practices
+  - Error handling testing guide with sample files explanation
+  - CLI testing documentation with command examples
+  - Sample files documentation detailing test data structure
+  - Debugging guide for library development
+- Debug scripts for local development and troubleshooting
+  - `debug_main.py` for core processing functionality
+  - `debug_cli.py` for CLI interface testing
+  - `debug_cli_chunked.py` for chunked processing testing
+  - `debug_cli_convert.py` for file format conversion testing
+  - `debug_cli_click.py` for Click-based CLI testing
+- Development mode installation instructions for library debugging
 - Global rules system for validating relationships between records
 - Support for global rules that can alter field values (e.g., inserting calculated sums or counts)
 - New global rule types: Count, Sum, Checksum, and Uniqueness
@@ -22,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modified abort logic to count failed records instead of individual errors
 - Added unit tests for the abort functionality
 - Improved documentation with references to the new rules guide
+- Fixed CLI entry point in setup.py to ensure proper command execution
 
 ## [0.2.2] - 2025-03-09
 
