@@ -216,17 +216,13 @@ class ChecksumRule(GlobalRule):
         self.target_field = self.params.get("target_field")  # Field containing the expected checksum
         
         # Initialize state based on checksum type
-        # First check the explicit type parameter
-        if self.checksum_type == "md5":
-            self.state = {"checksum": hashlib.md5()}
-        elif self.checksum_type == "sum" or self.checksum_type == "xor" or self.checksum_type == "mod10":
-            # Numeric checksum types
-            self.state = {"checksum": 0}
-        # Then check the algorithm parameter if type wasn't specified or was unrecognized
-        elif self.algorithm.upper() == "MD5":
+        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
             self.state = {"checksum": hashlib.md5()}
         elif self.algorithm.upper() == "SHA256":
             self.state = {"checksum": hashlib.sha256()}
+        elif self.checksum_type in ["sum", "xor", "mod10"] or not self.algorithm:
+            # Numeric checksum types
+            self.state = {"checksum": 0}
         else:
             # Default to numeric checksum
             self.state = {"checksum": 0}
@@ -301,9 +297,8 @@ class ChecksumRule(GlobalRule):
     
     def _update_checksum(self, value: str) -> None:
         """Update the checksum based on the value and algorithm."""
-        # Handle hash-based checksums first
-        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5" or self.algorithm.upper() == "SHA256":
-            # MD5 or SHA256 hash - checksum is already a hash object
+        # Handle hash-based checksums (MD5 and SHA256)
+        if isinstance(self.state["checksum"], hashlib._hashlib.HASH):
             self.state["checksum"].update(value.encode())
         # Handle numeric checksums
         elif self.checksum_type == "sum":
@@ -321,6 +316,9 @@ class ChecksumRule(GlobalRule):
             except (ValueError, TypeError):
                 # Ignore non-numeric values
                 pass
+        else:
+            # Default to sum for unrecognized types
+            self.state["checksum"] += sum(ord(c) for c in value)
     
     def finalize(self) -> List[ValidationError]:
         """
@@ -371,9 +369,7 @@ class ChecksumRule(GlobalRule):
         Returns:
             The calculated checksum
         """
-        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
-            return self.state["checksum"].hexdigest()
-        elif self.algorithm.upper() == "SHA256":
+        if isinstance(self.state["checksum"], hashlib._hashlib.HASH):
             return self.state["checksum"].hexdigest()
         return self.state["checksum"]
 

@@ -1,21 +1,42 @@
 import unittest
 import hashlib
 from flatforge.rules.global_rules import ChecksumRule
-from flatforge.core import ParsedRecord, Field, FieldValue, Section
+from flatforge.core import ParsedRecord, Field, FieldValue, Section, SectionType, Record
 
 class TestChecksumValidation(unittest.TestCase):
     def setUp(self):
         """Set up common test fixtures."""
-        self.section = Section(name="TestSection", start_line=1, end_line=100)
+        # Create a test record to be used by Section
+        test_record = Record(
+            name="TestRecord",
+            fields=[
+                Field(name="data_field", position=0),
+                Field(name="checksum_field", position=1)
+            ]
+        )
+        
+        # Create section with correct parameters
+        self.section = Section(
+            name="TestSection", 
+            type=SectionType.BODY,
+            record=test_record
+        )
         
     def create_parsed_record(self, field_values):
         """Helper method to create a ParsedRecord with given field values."""
-        record = ParsedRecord(section=self.section, record_number=1)
+        parsed_field_values = {}
+        
         for field_name, value in field_values.items():
             field = Field(name=field_name, position=0, length=len(str(value)))
             field_value = FieldValue(field=field, value=str(value))
-            record.field_values[field_name] = field_value
-        return record
+            parsed_field_values[field_name] = field_value
+            
+        return ParsedRecord(
+            section=self.section,
+            record_number=1,
+            field_values=parsed_field_values,
+            raw_data=",".join(str(v) for v in field_values.values())
+        )
         
     def test_single_column_checksum_md5(self):
         """Test single-column MD5 checksum."""
