@@ -188,6 +188,11 @@ class ChecksumRule(GlobalRule):
     
     This rule verifies that the checksum of a field across all records matches
     a specified checksum or a checksum from another field.
+    
+    Extended functionality allows for:
+    - Multi-column checksums (combining values from multiple fields)
+    - Row-based checksums (using all fields in a record)
+    - Different hashing algorithms (MD5, SHA256)
     """
     
     def __init__(self, name: str, params: Optional[dict] = None):
@@ -199,7 +204,24 @@ class ChecksumRule(GlobalRule):
             params: Optional parameters for the rule
         """
         super().__init__(name, params)
-        self.state = {"checksum": 0}
+        
+        # Legacy parameters
+        self.field = self.params.get("field")
+        self.checksum_type = self.params.get("type", "sum")
+        
+        # New extended parameters
+        self.validation_type = self.params.get("validation_type", "column")  # 'column', 'multi_column', or 'row'
+        self.columns = self.params.get("columns", [])  # List of columns for multi-column checksum
+        self.algorithm = self.params.get("algorithm", "MD5")  # Default to MD5
+        self.target_field = self.params.get("target_field")  # Field containing the expected checksum
+        
+        # Initialize state based on checksum type
+        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
+            self.state = {"checksum": hashlib.md5()}
+        elif self.algorithm.upper() == "SHA256":
+            self.state = {"checksum": hashlib.sha256()}
+        else:
+            self.state = {"checksum": 0}
     
     def process_record(self, record: ParsedRecord) -> None:
         """
@@ -212,9 +234,22 @@ class ChecksumRule(GlobalRule):
         section_name = self.params.get("section")
         if section_name and record.section.name != section_name:
             return
-            
-        # Get the field to checksum
-        field_name = self.params.get("field")
+        
+        # Handle different validation types
+        if self.validation_type == "multi_column" and self.columns:
+            # Process multiple columns
+            self._process_multiple_columns(record)
+        elif self.validation_type == "row":
+            # Process entire row
+            self._process_row(record)
+        else:
+            # Legacy single column behavior
+            self._process_single_column(record)
+    
+    def _process_single_column(self, record: ParsedRecord) -> None:
+        """Process a single column for checksum calculation."""
+        # Get the field to checksum (legacy parameter)
+        field_name = self.field
         if not field_name:
             return
             
@@ -225,28 +260,59 @@ class ChecksumRule(GlobalRule):
             
         # Calculate the checksum
         value = field_value.value
-        checksum_type = self.params.get("type", "sum")
+        self._update_checksum(value)
+    
+    def _process_multiple_columns(self, record: ParsedRecord) -> None:
+        """Process multiple columns for checksum calculation."""
+        if not self.columns:
+            return
+            
+        # Combine values from specified columns
+        values = []
+        for column in self.columns:
+            field_value = record.field_values.get(column)
+            if not field_value:
+                continue
+            values.append(field_value.value)
         
-        if checksum_type == "sum":
+        # Calculate checksum of combined values
+        combined_value = ''.join(values)
+        self._update_checksum(combined_value)
+    
+    def _process_row(self, record: ParsedRecord) -> None:
+        """Process the entire row for checksum calculation."""
+        # Exclude the target field if specified
+        row_data = {}
+        for field_name, field_value in record.field_values.items():
+            if self.target_field and field_name == self.target_field:
+                continue
+            row_data[field_name] = field_value.value
+            
+        # Calculate checksum of the row data
+        self._update_checksum(str(row_data))
+    
+    def _update_checksum(self, value: str) -> None:
+        """Update the checksum based on the value and algorithm."""
+        if self.checksum_type == "sum":
             # Sum the ASCII values of the characters
             self.state["checksum"] += sum(ord(c) for c in value)
-        elif checksum_type == "xor":
+        elif self.checksum_type == "xor":
             # XOR the ASCII values of the characters
             for c in value:
                 self.state["checksum"] ^= ord(c)
-        elif checksum_type == "mod10":
+        elif self.checksum_type == "mod10":
             # Modulo 10 checksum (Luhn algorithm)
-            # This is a simplified version
             try:
                 digits = [int(d) for d in value if d.isdigit()]
                 self.state["checksum"] = (self.state["checksum"] + sum(digits)) % 10
             except (ValueError, TypeError):
                 # Ignore non-numeric values
                 pass
-        elif checksum_type == "md5":
-            # MD5 hash (store as hex string)
-            if "checksum" not in self.state or self.state["checksum"] == 0:
-                self.state["checksum"] = hashlib.md5()
+        elif self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
+            # MD5 hash
+            self.state["checksum"].update(value.encode())
+        elif self.algorithm.upper() == "SHA256":
+            # SHA256 hash
             self.state["checksum"].update(value.encode())
     
     def finalize(self) -> List[ValidationError]:
@@ -261,20 +327,18 @@ class ChecksumRule(GlobalRule):
         # Check if the checksum matches the expected checksum
         expected_checksum = self.params.get("expected_checksum")
         if expected_checksum is not None:
-            checksum_type = self.params.get("type", "sum")
+            actual_checksum = self.calculate_value()
             
-            if checksum_type == "md5":
-                actual_checksum = self.state["checksum"].hexdigest()
-                if actual_checksum != expected_checksum:
+            if isinstance(actual_checksum, str) and isinstance(expected_checksum, str):
+                # Case-insensitive comparison for hash digests
+                if actual_checksum.lower() != expected_checksum.lower():
                     errors.append(ValidationError(
                         f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
                         rule_name=self.name,
                         error_code="CHECKSUM_MISMATCH"
                     ))
             else:
-                expected_checksum = int(expected_checksum)
-                actual_checksum = self.state["checksum"]
-                
+                # Numeric comparison
                 if actual_checksum != expected_checksum:
                     errors.append(ValidationError(
                         f"Checksum mismatch: expected {expected_checksum}, got {actual_checksum}",
@@ -283,7 +347,7 @@ class ChecksumRule(GlobalRule):
                     ))
                 
         # Check if the checksum matches a field value
-        checksum_field = self.params.get("checksum_field")
+        checksum_field = self.params.get("checksum_field") or self.target_field
         if checksum_field and not self.should_insert_value():
             section_name, field_name = checksum_field.split(".")
             # This would require access to the parsed records, which we don't have here
@@ -300,8 +364,9 @@ class ChecksumRule(GlobalRule):
         Returns:
             The calculated checksum
         """
-        checksum_type = self.params.get("type", "sum")
-        if checksum_type == "md5":
+        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
+            return self.state["checksum"].hexdigest()
+        elif self.algorithm.upper() == "SHA256":
             return self.state["checksum"].hexdigest()
         return self.state["checksum"]
 

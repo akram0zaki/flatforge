@@ -535,3 +535,35 @@ class DelimitedParser(Parser):
             self._apply_rules(field_value, parsed_record)
             
         return parsed_record 
+
+
+class FileParser:
+    def __init__(self, config, input_file, output_file, errors_file=None):
+        self.config = config
+        self.input_file = input_file
+        self.output_file = output_file
+        self.errors_file = errors_file
+        
+        # Get encoding settings
+        self.file_settings = config.get('file_settings', {})
+        self.input_encoding = self.file_settings.get('input_encoding', 'utf-8')
+        self.output_encoding = self.file_settings.get('output_encoding', 'utf-8')
+        
+    def parse_file(self):
+        """Read the input file with the specified encoding and write to output file."""
+        # Read the content with the input encoding
+        with open(self.input_file, 'r', encoding=self.input_encoding) as f:
+            content = f.read()
+            
+        # Write the content with the output encoding
+        with open(self.output_file, 'w', encoding=self.output_encoding) as f:
+            f.write(content)
+            
+        return content
+            
+    def write_output(self, records):
+        # Use specified output encoding
+        with open(self.output_file, 'w', encoding=self.output_encoding) as f:
+            # Implementation for writing output with specified encoding
+            for record in records:
+                f.write(str(record) + '\n') 
