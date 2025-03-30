@@ -73,6 +73,66 @@ flatforge transform --config samples/config/csv_to_fixed_length.yaml --input sam
 flatforge process --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/processed.csv --error samples/output/errors.csv
 ```
 
+### Testing New Features (v0.3.0)
+
+#### Testing Extended Checksum Validation
+
+To test the extended checksum validation features:
+
+```bash
+# Test multi-column checksum validation with SHA256
+flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_checksum.csv --output samples/output/valid_orders.csv --error samples/output/checksum_errors.csv
+
+# Run the comprehensive test script for all checksum types (sum, xor, mod10, md5, SHA256)
+python samples/test_new_features_v0.3.0_20250330.py --feature checksum
+
+# Test specific checksum types
+python samples/test_checksum.py --create-data
+python samples/test_checksum.py --type single  # For single column checksums
+python samples/test_checksum.py --type multi   # For multi-column checksums
+python samples/test_checksum.py --type row     # For row-based checksums
+python samples/test_checksum.py --type all     # For all checksum types
+```
+
+#### Testing Luhn Algorithm Validation
+
+To test credit card validation using the Luhn algorithm:
+
+```bash
+flatforge validate --config samples/config/credit_card_processing.yaml --input samples/input/credit_card_data.csv --output samples/output/valid_cards.csv --error samples/output/card_errors.csv
+
+# Or using the feature test script
+python samples/test_new_features_v0.3.0_20250330.py --feature credit_card
+```
+
+#### Testing GUID Validation and Generation
+
+To test GUID validation and generation:
+
+```bash
+flatforge validate --config samples/config/guid_generation.yaml --input samples/input/user_data.csv --output samples/output/users_with_guids.csv --error samples/output/guid_errors.csv
+
+# Or using the feature test script
+python samples/test_new_features_v0.3.0_20250330.py --feature guid
+```
+
+#### Testing Encoding Transformation
+
+To test file encoding transformation:
+
+```bash
+# Using the feature test script which creates a test file
+python samples/test_new_features_v0.3.0_20250330.py --feature encoding
+```
+
+#### Testing All New Features
+
+To test all new features at once:
+
+```bash
+python samples/test_new_features_v0.3.0_20250330.py
+```
+
 ### Testing with Sample Error Files
 
 To test the CLI with sample error files:
@@ -149,6 +209,27 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists(error_file))
+    
+    def test_checksum_validation(self):
+        # Test checksum validation
+        config_file = os.path.join(self.config_dir, "multi_column_checksum.yaml")
+        input_file = os.path.join(self.input_dir, "orders_with_checksum.csv")
+        output_file = os.path.join(self.output_dir, "valid_orders.csv")
+        error_file = os.path.join(self.output_dir, "checksum_errors.csv")
+        
+        # Run the command
+        result = subprocess.run([
+            "flatforge", "validate",
+            "--config", config_file,
+            "--input", input_file,
+            "--output", output_file,
+            "--error", error_file
+        ], capture_output=True, text=True)
+        
+        # Check the result
+        self.assertEqual(result.returncode, 0)
+        self.assertTrue(os.path.exists(output_file))
+        self.assertTrue(os.path.exists(error_file))
         
     # Add more test methods for other commands and scenarios
 ```
@@ -161,6 +242,8 @@ To test how the CLI handles errors:
 2. **Invalid Files**: Test what happens when input files don't exist or are invalid
 3. **Invalid Configuration**: Test what happens when configuration files are invalid
 4. **Permission Issues**: Test what happens when output files can't be written due to permission issues
+5. **Invalid Checksums**: Test what happens when checksums don't match expected values
+6. **Invalid GUIDs**: Test what happens when GUIDs don't conform to the expected format
 
 Example:
 
@@ -173,6 +256,9 @@ flatforge validate --config samples/config/employee_csv.yaml --input nonexistent
 
 # Test invalid configuration file
 flatforge validate --config nonexistent_config.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --error samples/output/errors.csv
+
+# Test invalid checksum
+flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_invalid_checksum.csv --output samples/output/valid_orders.csv --error samples/output/checksum_errors.csv
 ```
 
 ## Troubleshooting CLI Issues
@@ -185,6 +271,8 @@ If you encounter issues with the CLI:
 4. **Check Permissions**: Ensure that you have permission to read input files and write output files
 5. **Check Error Output**: Check the error output for details about the issue
 6. **Run with Verbose Output**: Use the `--verbose` flag to get more detailed output
+7. **Check Algorithm Types**: For checksum validation, ensure that the algorithm type is correctly specified
+8. **Check Global Rules**: For global rules, ensure that the rule parameters are correctly configured
 
 ## Best Practices for CLI Testing
 
@@ -193,4 +281,5 @@ If you encounter issues with the CLI:
 3. **Test Edge Cases**: Test edge cases, such as large files or files with unusual formats
 4. **Automate Testing**: Automate CLI testing to ensure consistent results
 5. **Document Test Cases**: Document test cases and expected results
-6. **Clean Up After Tests**: Clean up any files created during tests 
+6. **Clean Up After Tests**: Clean up any files created during tests
+7. **Version Your Test Scripts**: Use a naming convention like `test_<feature_set>_v<version>_<yyyyMMdd>.py` for test scripts to clearly indicate their purpose and version 

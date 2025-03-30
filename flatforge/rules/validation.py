@@ -321,4 +321,107 @@ class ChoiceRule(ValidationRule):
                 field_name=field_value.field.name,
                 value=value,
                 rule_name=self.name
-            ) 
+            )
+
+
+class LuhnValidationRule(ValidationRule):
+    """Validates a credit card number using the Luhn algorithm."""
+    
+    def __init__(self, config):
+        super().__init__(config)
+        self.column = config.get('column')
+        self.strip_spaces = config.get('strip_spaces', True)
+        self.strip_hyphens = config.get('strip_hyphens', True)
+        self.error_message = config.get('error_message', "Invalid card number")
+        
+    def validate(self, record, line_number=None):
+        if not self.column or self.column not in record:
+            return False, f"Column '{self.column}' not found"
+            
+        card_number = str(record[self.column])
+        
+        # Apply preprocessing if needed
+        if self.strip_spaces:
+            card_number = card_number.replace(' ', '')
+        if self.strip_hyphens:
+            card_number = card_number.replace('-', '')
+            
+        # Check if the card number contains only digits
+        if not card_number.isdigit():
+            return False, f"{self.error_message} (contains non-digit characters)"
+            
+        # Apply Luhn algorithm
+        is_valid = self._luhn_check(card_number)
+        if not is_valid:
+            return False, self.error_message
+            
+        return True, None
+        
+    def _luhn_check(self, card_number):
+        """Implementation of the Luhn algorithm."""
+        # Luhn algorithm implementation
+        digits = [int(d) for d in card_number]
+        checksum = 0
+        
+        for i, digit in enumerate(reversed(digits)):
+            if i % 2 == 1:
+                digit *= 2
+                if digit > 9:
+                    digit -= 9
+            checksum += digit
+            
+        return checksum % 10 == 0 
+
+
+class GuidValidationRule(ValidationRule):
+    """Validates that a field contains a valid GUID/UUID."""
+    
+    def __init__(self, config):
+        super().__init__(config)
+        self.column = config.get('column')
+        self.version = config.get('version')  # Optional UUID version check
+        
+    def validate(self, record, line_number=None):
+        if not self.column or self.column not in record:
+            return False, f"Column '{self.column}' not found"
+            
+        guid_value = str(record[self.column]).strip()
+        
+        # Basic UUID format validation
+        import re
+        uuid_pattern = r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+        if not re.match(uuid_pattern, guid_value, re.IGNORECASE):
+            return False, f"Invalid GUID format: {guid_value}"
+            
+        # If version is specified, validate the version
+        if self.version is not None:
+            version = int(self.version)
+            # Version is encoded in the first digit of the third group
+            guid_version = int(guid_value[14], 16)
+            if guid_version != version:
+                return False, f"Expected UUID version {version}, got version {guid_version}"
+                
+        return True, None 
+
+
+class ValidationRuleFactory:
+    @staticmethod
+    def create_rule(rule_type, config):
+        if rule_type == 'required':
+            return RequiredRule(config)
+        elif rule_type == 'string_length':
+            return StringLengthRule(config)
+        elif rule_type == 'numeric':
+            return NumericRule(config)
+        elif rule_type == 'date':
+            return DateRule(config)
+        elif rule_type == 'regex':
+            return RegexRule(config)
+        elif rule_type == 'choice':
+            return ChoiceRule(config)
+        elif rule_type == 'luhn':
+            return LuhnValidationRule(config)
+        elif rule_type == 'guid':
+            return GuidValidationRule(config)
+        else:
+            raise ValueError(f"Unknown validation rule type: {rule_type}") 

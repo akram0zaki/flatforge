@@ -41,7 +41,23 @@ global_rules:
 
 ### Checksum Rule
 
-The Checksum rule calculates a checksum of a field across all records in a section and validates that the checksum matches a specified value or a value from another field.
+The Checksum rule calculates a checksum of field values and validates that the checksum matches a specified value or a value from another field. This rule supports three modes of operation:
+
+1. **Single Column Checksum**: Calculates a checksum of a single field across all records
+2. **Multi-Column Checksum**: Calculates a checksum of multiple fields combined
+3. **Row Checksum**: Calculates a checksum of all fields in a record (row-based)
+
+#### Supported Checksum Types
+
+The Checksum rule supports the following checksum algorithms:
+
+- **sum**: Adds the ASCII values of all characters in the input value(s)
+- **xor**: Performs XOR operation on the ASCII values of all characters
+- **mod10**: Modulo 10 checksum (Luhn algorithm), often used for credit card validation
+- **md5**: MD5 hash algorithm, generates a 32-character hexadecimal digest
+- **SHA256**: SHA-256 hash algorithm, generates a 64-character hexadecimal digest
+
+#### Single Column Checksum (Legacy)
 
 ```yaml
 global_rules:
@@ -50,12 +66,69 @@ global_rules:
     params:
       section: body
       field: data
-      type: sum  # Can be sum, xor, mod10, or md5
+      type: md5  # Can be sum, xor, mod10, or md5
       checksum_field: footer.checksum
       insert_value: true  # Insert the calculated checksum into the target field
       target_field: footer.checksum
       include_invalid_records: false  # Only include valid records in the checksum
 ```
+
+#### Multi-Column Checksum
+
+```yaml
+global_rules:
+  - type: checksum
+    name: multi_column_checksum
+    params:
+      section: body
+      validation_type: multi_column
+      columns:
+        - customer_id
+        - order_id
+        - amount
+      algorithm: SHA256  # MD5 or SHA256
+      target_field: checksum_field
+      insert_value: false  # Whether to insert the calculated value
+```
+
+#### Row Checksum
+
+```yaml
+global_rules:
+  - type: checksum
+    name: row_checksum
+    params:
+      section: body
+      validation_type: row
+      algorithm: SHA256  # MD5 or SHA256
+      target_field: row_checksum
+      insert_value: false  # Whether to insert the calculated value
+```
+
+#### Parameters
+
+The Checksum rule supports the following parameters:
+
+- **Common Parameters**:
+  - `section`: The section to apply the rule to
+  - `include_invalid_records`: Whether to include invalid records in the calculation (default: false)
+  - `insert_value`: Whether to insert the calculated value into a target field (default: false)
+  - `target_field`: The field to insert the calculated value into
+  - `expected_checksum`: The expected checksum value for validation
+
+- **Single Column Parameters**:
+  - `field`: The field to calculate the checksum for
+  - `type`: The checksum algorithm type (sum, xor, mod10, md5)
+  - `checksum_field`: The field containing the expected checksum (legacy parameter)
+
+- **Multi-Column Parameters**:
+  - `validation_type`: Set to "multi_column" for multi-column checksum
+  - `columns`: List of fields to include in the checksum calculation
+  - `algorithm`: Hash algorithm to use (MD5 or SHA256)
+
+- **Row Parameters**:
+  - `validation_type`: Set to "row" for row-based checksum
+  - `algorithm`: Hash algorithm to use (MD5 or SHA256)
 
 ### Uniqueness Rule
 
