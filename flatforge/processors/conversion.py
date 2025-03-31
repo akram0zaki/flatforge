@@ -22,17 +22,23 @@ class ConversionProcessor(Processor):
     a mapping configuration.
     """
     
-    def __init__(self, input_format: FileFormat, output_format: FileFormat):
+    def __init__(self, input_format: FileFormat, output_format: FileFormat, mapping_config: Optional[Dict] = None):
         """
         Initialize a conversion processor.
         
         Args:
             input_format: The input file format
             output_format: The output file format
+            mapping_config: Optional mapping configuration
         """
         super().__init__(input_format)
         self.input_format = input_format
         self.output_format = output_format
+        self.mapping_config = mapping_config
+        
+        # Add mapping to output format if provided
+        if mapping_config:
+            setattr(self.output_format, 'mapping', mapping_config)
     
     def process(self, input_file: str, output_file: str, error_file: Optional[str] = None) -> ProcessingResult:
         """
