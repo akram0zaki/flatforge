@@ -1,0 +1,6 @@
+HBATCH1234 20250101123045
+D1001      John Smith                         19800101US75000.00  101       Jane Doe                           
+D1002      Mary Johnson                       19850215UK85000.50  101       Jane Doe                           
+D1003      Robert Brown                       19900320CA65000.75  102       John Smith                         
+X1004      Alice Williams                     19950425AU70000.25  102                                          
+F4              235001.50 

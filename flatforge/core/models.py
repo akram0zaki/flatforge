@@ -77,6 +77,42 @@ class Section:
     max_records: Optional[int] = None
     identifier: Optional[Dict[str, Any]] = None
     description: Optional[str] = None
+    
+    def __init__(
+        self,
+        name: str,
+        type: SectionType,
+        record: Record,
+        min_records: int = 1,
+        max_records: Optional[int] = None,
+        identifier: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
+        start_line: Optional[int] = None,  # Backward compatibility parameter, ignored
+        end_line: Optional[int] = None,    # Backward compatibility parameter, ignored
+        **kwargs  # Accept and ignore any additional parameters
+    ):
+        """
+        Initialize a Section with support for backward compatibility parameters.
+        
+        Args:
+            name: The name of the section
+            type: The type of section
+            record: The record format for this section
+            min_records: Minimum number of records in this section
+            max_records: Maximum number of records in this section
+            identifier: Optional identifier to recognize this section
+            description: Optional description of the section
+            start_line: Ignored parameter for backward compatibility
+            end_line: Ignored parameter for backward compatibility
+            **kwargs: Additional keyword arguments (ignored)
+        """
+        self.name = name
+        self.type = type
+        self.record = record
+        self.min_records = min_records
+        self.max_records = max_records
+        self.identifier = identifier
+        self.description = description
 
 
 @dataclass

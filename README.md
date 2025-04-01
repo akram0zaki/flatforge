@@ -1,6 +1,7 @@
 # FlatForge
 
 A generic, modular, and extensible library to validate flat files of fixed length or delimited format.
+This project was created with help of Claude Sonnet 3.7.
 
 ## Features
 

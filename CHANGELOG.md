@@ -7,8 +7,16 @@ All notable changes to the FlatForge project will be documented in this file.
 ### Added
 
 ### Changed
+- Standardized validation rule APIs for consistent interfaces across all rules
+- Updated LuhnRule and GuidRule to follow the same interface pattern as other validation rules
+- Added backward compatibility methods for dictionary-style records in transformers
+- Added backward compatibility for older test code using previous API patterns
 
 ### Fixed
+- Fixed inconsistencies in validation rule API implementations
+- Resolved test failures due to API inconsistencies across validation rules
+- Added backward compatibility for Section class to handle legacy start_line and end_line parameters
+- Fixed LuhnValidationRule and GuidValidationRule references for test compatibility
 
 ## [0.3.2] - 2025-04-01
 

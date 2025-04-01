@@ -1,2 +1,0 @@
-[console_scripts]
-flatforge = flatforge.cli.__init__:cli

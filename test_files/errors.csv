@@ -1,0 +1,16 @@
+Record 2 in section body:
+Raw data: D,ABC,John Smith,19800101,US,75000.00,101,Jane Doe
+Error: Field 'employee_id': Value is not numeric (value: 'ABC') [rule: numeric]
+
+Record 3 in section body:
+Raw data: D,1002,Mary Johnson,INVALID_DATE,UK,85000.50,101,Jane Doe
+Error: Field 'date_of_birth': Invalid date format. Expected format: %Y%m%d (value: 'INVALID_DATE') [rule: date]
+
+Record 4 in section body:
+Raw data: D,1003,Robert Brown,19900320,COUNTRY_TOO_LONG,65000.75,102,John Smith
+Error: Field 'country_code': Field must be at most 2 characters long (value: 'COUNTRY_TOO_LONG') [rule: string_length]
+
+Record 5 in section body2:
+Raw data: X,1004,Alice Williams,19950425,AU,-70000.25,102,John Smith
+Error: Field 'salary': Value is less than minimum value 0 (value: '-70000.25') [rule: numeric]
+
