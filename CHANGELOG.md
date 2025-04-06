@@ -2,7 +2,7 @@
 
 All notable changes to the FlatForge project will be documented in this file.
 
-## [Unreleased]
+## [0.3.4] - 2024-05-23
 
 ### Added
 - Configuration validation system with JSON schema and domain-specific rules:

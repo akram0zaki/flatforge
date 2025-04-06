@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="flatforge",
-    version="0.3.3",
+    version="0.3.4",
     author="Akram Zaki",
     author_email="azpythonprojects@gmail.com",
     description="A library for validating and transforming flat files",
@@ -23,6 +23,7 @@ setup(
         "pyyaml>=6.0",
         "click>=8.0.0",
         "tqdm>=4.64.0",
+        "jsonschema>=4.0.0",
     ],
     entry_points={
         "console_scripts": [
