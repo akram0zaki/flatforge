@@ -22,12 +22,13 @@ class ConfigValidator:
     """
     
     @classmethod
-    def from_file(cls, config_file: Union[str, Path]) -> 'ConfigValidator':
+    def from_file(cls, config_file: Union[str, Path], schema_file: Optional[str] = None) -> 'ConfigValidator':
         """
         Create a configuration validator from a file.
         
         Args:
             config_file: Path to the configuration file
+            schema_file: Optional path to a custom JSON schema file
             
         Returns:
             A ConfigValidator instance
@@ -56,7 +57,7 @@ class ConfigValidator:
             else:
                 raise ValueError(f"Unsupported file format: {config_file.suffix}")
             
-        return cls(config)
+        return cls(config, schema_path=schema_file)
     
     def __init__(self, config: Dict[str, Any], schema_path: Optional[str] = None):
         """

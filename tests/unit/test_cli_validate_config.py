@@ -64,11 +64,25 @@ class TestValidateConfigCommand(unittest.TestCase):
         }
         with open(self.invalid_config_path, 'w') as f:
             yaml.dump(self.invalid_config, f)
+            
+        # Create a temporary schema file for testing
+        fd, self.schema_path = tempfile.mkstemp(suffix=".json")
+        os.close(fd)
+        
+        self.schema = {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "type": {"enum": ["delimited", "fixed_length"]}
+            }
+        }
+        with open(self.schema_path, 'w') as f:
+            yaml.dump(self.schema, f)
     
     def tearDown(self):
         """Clean up test fixtures."""
         try:
-            for path in [self.valid_config_path, self.invalid_config_path]:
+            for path in [self.valid_config_path, self.invalid_config_path, self.schema_path]:
                 if os.path.exists(path):
                     os.unlink(path)
         except Exception as e:
@@ -94,23 +108,19 @@ class TestValidateConfigCommand(unittest.TestCase):
         # Run the command with a valid config
         result = runner.invoke(main, ['validate-config', '--config', self.valid_config_path])
         
-        # Log the result for debugging
-        print(f"CLI result (valid): {result.exit_code} - {result.output}")
-        
         # Assertions for valid config
         self.assertEqual(0, result.exit_code, "Valid config should return success (0)")
         self.assertIn("valid", result.output.lower(), "Output should indicate config is valid")
+        
+        # Verify the mock was called correctly
+        mock_validator_class.from_file.assert_called_with(self.valid_config_path)
         
         # Test case 2: Invalid configuration
         mock_validator.validate.return_value = False
         mock_validator.errors = ["Error 1", "Error 2"]
         
-        # Run the command with an invalid config using catch_exceptions=False
-        # to let Click handle the sys.exit and convert it to the appropriate exit code
+        # Run the command with an invalid config
         result = runner.invoke(main, ['validate-config', '--config', self.invalid_config_path], catch_exceptions=False)
-        
-        # Log the result for debugging
-        print(f"CLI result (invalid): {result.exit_code} - {result.output}")
         
         # Assertions for invalid config
         self.assertEqual(1, result.exit_code, "Invalid config should return error (1)")
@@ -122,12 +132,29 @@ class TestValidateConfigCommand(unittest.TestCase):
         # Run the command with a non-existent file
         result = runner.invoke(main, ['validate-config', '--config', 'nonexistent.yaml'], catch_exceptions=False)
         
-        # Log the result for debugging
-        print(f"CLI result (nonexistent): {result.exit_code} - {result.output}")
-        
         # Assertions for nonexistent file
         self.assertEqual(1, result.exit_code, "Non-existent file should return error (1)")
         self.assertIn("error", result.output.lower(), "Output should mention error")
+        
+        # Test case 4: With custom schema
+        # Reset side effect and set up for success case
+        mock_validator_class.from_file.side_effect = None
+        mock_validator_class.from_file.return_value = mock_validator
+        mock_validator.validate.return_value = True
+        mock_validator.errors = []
+        
+        # Run the command with a custom schema
+        result = runner.invoke(main, [
+            'validate-config', 
+            '--config', self.valid_config_path,
+            '--schema', self.schema_path
+        ])
+        
+        # Assertions for schema case
+        self.assertEqual(0, result.exit_code, "Config with schema should return success (0)")
+        
+        # Verify the mock was called correctly with schema
+        mock_validator_class.from_file.assert_called_with(self.valid_config_path, schema_file=self.schema_path)
         
     def test_validator_functionality(self):
         """Test the core validator functionality directly instead of through CLI."""
@@ -147,7 +174,6 @@ class TestValidateConfigCommand(unittest.TestCase):
             self.assertFalse(is_valid, "Invalid configuration should fail validation")
         except Exception as e:
             # If it raises an exception that's also acceptable
-            print(f"Expected error validating invalid configuration: {e}")
             pass
         
         # Test non-existent file

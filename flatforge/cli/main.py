@@ -78,8 +78,8 @@ def validate_config(config, schema):
     try:
         click.echo(f"Validating configuration file: {config}")
         
-        # Create validator
-        validator = ConfigValidator.from_file(config)
+        # Create validator - pass the schema parameter if provided
+        validator = ConfigValidator.from_file(config, schema_file=schema) if schema else ConfigValidator.from_file(config)
         
         # Validate the configuration
         is_valid = validator.validate()
