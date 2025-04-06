@@ -105,13 +105,12 @@ This script allows you to debug the CLI interface by simulating command-line arg
 """
 Debug script for the FlatForge CLI.
 
-This script allows you to debug the CLI in your IDE by directly calling the CLI function
-with command-line arguments.
+This script is used to debug the CLI commands.
 """
 import sys
-from flatforge.cli import cli
+from flatforge.cli.main import main
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Set up the arguments you want to pass to the CLI
     sys.argv = [
         "flatforge",  # Program name (can be anything)
@@ -123,7 +122,7 @@ if __name__ == "__main__":
     ]
     
     # Call the CLI function
-    cli()
+    sys.exit(main())
 ```
 
 **Purpose**: Debug the CLI interface by simulating command-line arguments. This is useful for testing how the CLI parses and processes arguments.
@@ -134,28 +133,28 @@ This script allows you to debug the chunked processing functionality:
 
 ```python
 """
-Debug script for the FlatForge CLI with chunked processing.
+Debug script for testing the CLI with chunked processing.
 
-This script allows you to debug the CLI with chunked processing and progress reporting.
+This script allows testing the CLI with chunked processing in your IDE.
 """
 import sys
-from flatforge.cli import cli
+from flatforge.cli.main import main
 
 if __name__ == "__main__":
     # Set up the arguments for chunked processing
     sys.argv = [
         "flatforge",
         "validate",
-        "--config", "samples/config/employee_csv.yaml",
-        "--input", "samples/input/employee_data.csv",
-        "--output", "samples/output/debug_chunked_output.csv",
-        "--errors", "samples/output/debug_chunked_errors.csv",
-        "--chunk-size", "2",  # Process 2 records at a time
-        "--show-progress"     # Show progress bar
+        "--config", "samples/config/large_file_config.yaml",
+        "--input", "samples/input/large_file.csv",
+        "--output", "samples/output/chunked_output.csv",
+        "--errors", "samples/output/chunked_errors.csv",
+        "--chunk-size", "1000",
+        "--show-progress"
     ]
     
     # Call the CLI function
-    cli()
+    main()
 ```
 
 **Purpose**: Debug the chunked processing functionality, which processes files in smaller chunks to reduce memory usage and provide progress reporting. This is useful for testing performance and memory usage with large files.
@@ -166,12 +165,12 @@ This script allows you to debug the file format conversion functionality:
 
 ```python
 """
-Debug script for the FlatForge CLI convert command.
+Debug script for the CLI convert command.
 
-This script allows you to debug the convert command in your IDE.
+This script is used to debug the convert command of the CLI.
 """
 import sys
-from flatforge.cli import cli
+from flatforge.cli.main import main
 
 if __name__ == "__main__":
     # Set up the arguments for the convert command
@@ -181,12 +180,12 @@ if __name__ == "__main__":
         "--input-config", "samples/config/employee_csv.yaml",
         "--output-config", "samples/config/employee_fixed_length.yaml",
         "--input", "samples/input/employee_data.csv",
-        "--output", "samples/output/debug_converted.txt",
-        "--errors", "samples/output/debug_convert_errors.txt"
+        "--output", "samples/output/converted_output.txt",
+        "--errors", "samples/output/converted_errors.csv"
     ]
     
     # Call the CLI function
-    cli()
+    main()
 ```
 
 **Purpose**: Debug the file format conversion functionality, which converts files from one format to another. This is useful for testing the transformation logic.
@@ -197,29 +196,27 @@ This script allows you to debug the CLI using Click's test runner:
 
 ```python
 """
-Debug script for the FlatForge CLI using Click's test runner.
+Debug script for the CLI using Click's testing features.
 
-This script allows you to debug the CLI in your IDE using Click's test runner,
-which provides more detailed output and error handling.
+This script demonstrates how to test the CLI commands using Click's CliRunner.
 """
+import click
 from click.testing import CliRunner
-from flatforge.cli import cli
+from flatforge.cli.main import main
 
-if __name__ == "__main__":
-    runner = CliRunner()
-    result = runner.invoke(cli, [
-        "validate",
-        "--config", "samples/config/employee_csv.yaml",
-        "--input", "samples/input/employee_data.csv",
-        "--output", "samples/output/debug_output.csv",
-        "--errors", "samples/output/debug_errors.csv"
-    ])
-    
-    # Print the result
-    print(f"Exit code: {result.exit_code}")
-    if result.exception:
-        print(f"Exception: {result.exception}")
-    print(f"Output:\n{result.output}")
+runner = CliRunner()
+result = runner.invoke(main, ['validate', '--help'])
+print(result.output)
+
+result = runner.invoke(main, [
+    'validate',
+    '--config', 'samples/config/employee_csv.yaml',
+    '--input', 'samples/input/employee_data.csv',
+    '--output', 'samples/output/debug_output.csv',
+    '--errors', 'samples/output/debug_errors.csv'
+])
+print(f"Exit code: {result.exit_code}")
+print(result.output)
 ```
 
 **Purpose**: Debug the CLI using Click's test runner, which provides more detailed output and error handling. This is useful for testing the CLI in a controlled environment and capturing the output and exceptions.
