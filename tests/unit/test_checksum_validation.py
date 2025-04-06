@@ -1,16 +1,25 @@
 import unittest
 import hashlib
 from flatforge.rules.global_rules import ChecksumRule
-from flatforge.core import ParsedRecord, Field, FieldValue, Section
+from flatforge.core import ParsedRecord, Field, FieldValue, Section, SectionType, Record
 
 class TestChecksumValidation(unittest.TestCase):
     def setUp(self):
         """Set up common test fixtures."""
-        self.section = Section(name="TestSection", start_line=1, end_line=100)
+        # Create a dummy record for the section
+        fields = [Field(name="test_field", position=0, length=10)]
+        dummy_record = Record(name="TestRecord", fields=fields)
+        
+        # Create a section with the required record parameter
+        self.section = Section(
+            name="TestSection", 
+            type=SectionType.BODY,
+            record=dummy_record
+        )
         
     def create_parsed_record(self, field_values):
         """Helper method to create a ParsedRecord with given field values."""
-        record = ParsedRecord(section=self.section, record_number=1)
+        record = ParsedRecord(section=self.section, record_number=1, field_values={}, raw_data="")
         for field_name, value in field_values.items():
             field = Field(name=field_name, position=0, length=len(str(value)))
             field_value = FieldValue(field=field, value=str(value))
@@ -122,7 +131,6 @@ class TestChecksumValidation(unittest.TestCase):
         params = {
             'field': 'data_field',
             'checksum_field': 'checksum_field',
-            'validation_type': 'column',
             'algorithm': 'SHA256'
         }
         rule = ChecksumRule(name="test_sha256_checksum", params=params)
@@ -192,9 +200,8 @@ class TestChecksumValidation(unittest.TestCase):
         
         # Since we're testing row checksum, we need to manually calculate the expected result
         # This should match the logic in the _process_row method
-        row_data = {'field1': 'value1', 'field2': 'value2', 'field3': '123'}
-        row_string = str(row_data)
-        expected_checksum = hashlib.sha256(row_string.encode()).hexdigest()
+        row_data = "{'field1': 'value1', 'field2': 'value2', 'field3': '123'}"
+        expected_checksum = hashlib.sha256(row_data.encode()).hexdigest()
         actual_checksum = rule.calculate_value()
         
         self.assertEqual(expected_checksum, actual_checksum)
