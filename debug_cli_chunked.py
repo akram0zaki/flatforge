@@ -1,23 +1,24 @@
 """
-Debug script for the FlatForge CLI with chunked processing.
+Debug script for testing the CLI with chunked processing.
 
-This script allows you to debug the CLI with chunked processing and progress reporting.
+This script allows testing the CLI with chunked processing in your IDE.
 """
+
 import sys
-from flatforge.cli import cli
+from flatforge.cli.main import main
 
 if __name__ == "__main__":
     # Set up the arguments for chunked processing
     sys.argv = [
         "flatforge",
         "validate",
-        "--config", "samples/config/employee_csv.yaml",
-        "--input", "samples/input/employee_data.csv",
-        "--output", "samples/output/debug_chunked_output.csv",
-        "--errors", "samples/output/debug_chunked_errors.csv",
-        "--chunk-size", "2",  # Process 2 records at a time
-        "--show-progress"     # Show progress bar
+        "--config", "samples/config/large_file_config.yaml",
+        "--input", "samples/input/large_file.csv",
+        "--output", "samples/output/chunked_output.csv",
+        "--errors", "samples/output/chunked_errors.csv",
+        "--chunk-size", "1000",
+        "--show-progress"
     ]
     
     # Call the CLI function
-    cli() 
+    main() 

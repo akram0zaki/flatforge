@@ -5,18 +5,63 @@ All notable changes to the FlatForge project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Configuration validation system with JSON schema and domain-specific rules:
+  - Schema validation using JSON Schema standard
+  - Domain-specific validation for field positions, uniqueness, etc. 
+  - CLI command `validate_config` to validate configuration files
+  - Programmatic validation through `ConfigValidator` class
+  - Built-in schema for configuration files
+  - Documentation for configuration validation in `docs/user_guide`
+  - Option to validate configuration in `FileFormat.from_yaml` method
+- Extended checksum validation with support for multiple algorithms:
+  - SHA256 algorithm for enhanced security
+  - Multi-column checksum validation
+  - Row-based checksum validation
+  - Support for sum, xor, mod10, md5, and SHA256 algorithms
+- GUID validation rule to validate UUIDs against RFC4122 specifications
+- GUID generation transformer to create valid UUIDs in output files
+- Value resolver transformer for complex value mappings
+- Luhn algorithm validation for credit card number verification
+- Field masking transformer with specific support for credit card masking
+- Encoding transformation for converting between different file encodings
+- File-level settings for input and output encoding specification
+- Comprehensive documentation for all new features
+- Sample configuration files demonstrating new features
+- Improved test script with standardized naming convention (yyyyMMdd format)
+- Enhanced CLI documentation and examples
 
 ### Changed
 - Standardized validation rule APIs for consistent interfaces across all rules
 - Updated LuhnRule and GuidRule to follow the same interface pattern as other validation rules
 - Added backward compatibility methods for dictionary-style records in transformers
 - Added backward compatibility for older test code using previous API patterns
+- Updated `FileFormat.from_yaml` to optionally validate configuration before parsing
+- Improved error handling for configuration validation
+- Enhanced documentation with configuration validation details
+- Improved error handling for validation rules
+- Enhanced unit test coverage for all validation types
+- Optimized checksum calculation performance
+- Updated documentation structure for better organization
+- Refactored transformation pipeline for better extensibility
+- Refactored validation rules into individual modules for better modularity
+- Enhanced NumericRule documentation to clearly describe min_value, max_value, and decimal_precision parameters
+- Improved validation rule organization by moving each rule to its own file
+- Consolidated CLI structure by moving all command functionality to `flatforge.cli` package:
+  - Removed standalone `cli.py` module to fix import conflicts
+  - Updated `flatforge.cli.main` to be the single entry point for all CLI commands 
+  - Modified entry point in `setup.py` to use `flatforge.cli.main:main`
+  - Added proper `__main__.py` for direct execution via `python -m flatforge`
+  - Fixed test code that was affected by CLI structure changes
 
 ### Fixed
 - Fixed inconsistencies in validation rule API implementations
 - Resolved test failures due to API inconsistencies across validation rules
 - Added backward compatibility for Section class to handle legacy start_line and end_line parameters
 - Fixed LuhnValidationRule and GuidValidationRule references for test compatibility
+- Bug in date format validation that caused incorrect error messages
+- Issue with string length validation when processing non-ASCII characters
+- Performance issue when processing large files with multiple validation rules
+- Fixed import conflicts between `flatforge/cli.py` and `flatforge/cli/__init__.py`
 
 ## [0.3.2] - 2025-04-01
 

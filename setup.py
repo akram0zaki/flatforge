@@ -26,7 +26,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "flatforge=flatforge.cli.__init__:cli",
+            "flatforge=flatforge.cli.main:main",
         ],
     },
 ) 

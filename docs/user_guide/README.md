@@ -397,4 +397,9 @@ FlatForge provides a wide range of rules for validating and transforming data. H
 - `checksum`: Calculates a checksum of a field across all records
 - `uniqueness`: Validates that a field or combination of fields has unique values across all records
 
-For detailed information about all rules and their parameters, see the [Rules Guide](rules_guide.md). 
+For detailed information about all rules and their parameters, see the [Rules Guide](rules_guide.md).
+
+For a detailed and comprehensive guide on configuration file structure, supported formats, and all available settings, please refer to the [Configuration Guide](configuration_guide.md).
+
+For information on validating your configuration files, please refer to the [Configuration Validation Guide](configuration_validation.md).
+

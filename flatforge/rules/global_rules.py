@@ -215,20 +215,16 @@ class ChecksumRule(GlobalRule):
         self.algorithm = self.params.get("algorithm", "")  # Algorithm for hash-based checksums
         self.target_field = self.params.get("target_field")  # Field containing the expected checksum
         
-        # Initialize state based on checksum type
-        # First check the explicit type parameter
-        if self.checksum_type == "md5":
-            self.state = {"checksum": hashlib.md5()}
-        elif self.checksum_type == "sum" or self.checksum_type == "xor" or self.checksum_type == "mod10":
-            # Numeric checksum types
-            self.state = {"checksum": 0}
-        # Then check the algorithm parameter if type wasn't specified or was unrecognized
-        elif self.algorithm.upper() == "MD5":
+        # Initialize state based on checksum type or algorithm
+        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
             self.state = {"checksum": hashlib.md5()}
         elif self.algorithm.upper() == "SHA256":
             self.state = {"checksum": hashlib.sha256()}
+        elif self.checksum_type in ["sum", "xor", "mod10"]:
+            # Numeric checksum types
+            self.state = {"checksum": 0}
         else:
-            # Default to numeric checksum
+            # Default to numeric checksum for unknown types
             self.state = {"checksum": 0}
     
     def process_record(self, record: ParsedRecord) -> None:
@@ -301,9 +297,9 @@ class ChecksumRule(GlobalRule):
     
     def _update_checksum(self, value: str) -> None:
         """Update the checksum based on the value and algorithm."""
-        # Handle hash-based checksums first
-        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5" or self.algorithm.upper() == "SHA256":
-            # MD5 or SHA256 hash - checksum is already a hash object
+        # Check if it's a hash object by checking for the update method
+        if hasattr(self.state["checksum"], 'update') and callable(self.state["checksum"].update):
+            # It's a hash object (MD5 or SHA256)
             self.state["checksum"].update(value.encode())
         # Handle numeric checksums
         elif self.checksum_type == "sum":
@@ -371,9 +367,8 @@ class ChecksumRule(GlobalRule):
         Returns:
             The calculated checksum
         """
-        if self.checksum_type == "md5" or self.algorithm.upper() == "MD5":
-            return self.state["checksum"].hexdigest()
-        elif self.algorithm.upper() == "SHA256":
+        # Check if it's a hash object by checking for the hexdigest method
+        if hasattr(self.state["checksum"], 'hexdigest') and callable(self.state["checksum"].hexdigest):
             return self.state["checksum"].hexdigest()
         return self.state["checksum"]
 
