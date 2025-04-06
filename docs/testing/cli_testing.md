@@ -19,7 +19,7 @@ FlatForge provides the following CLI commands:
 The `validate` command validates a file against a configuration:
 
 ```bash
-flatforge validate --config <config_file> --input <input_file> --output <output_file> --error <error_file>
+flatforge validate --config <config_file> --input <input_file> --output <output_file> --errors <error_file>
 ```
 
 Parameters:
@@ -33,7 +33,7 @@ Parameters:
 The `transform` command transforms a file from one format to another:
 
 ```bash
-flatforge transform --config <config_file> --input <input_file> --output <output_file> --error <error_file>
+flatforge transform --config <config_file> --input <input_file> --output <output_file> --errors <error_file>
 ```
 
 Parameters:
@@ -47,7 +47,7 @@ Parameters:
 The `process` command processes a file (validates and transforms):
 
 ```bash
-flatforge process --config <config_file> --input <input_file> --output <output_file> --error <error_file>
+flatforge process --config <config_file> --input <input_file> --output <output_file> --errors <error_file>
 ```
 
 Parameters:
@@ -64,13 +64,13 @@ To test the basic functionality of the CLI:
 
 ```bash
 # Test validation
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --error samples/output/errors.csv
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --errors samples/output/errors.csv
 
 # Test transformation
-flatforge transform --config samples/config/csv_to_fixed_length.yaml --input samples/input/employee_data.csv --output samples/output/transformed.txt --error samples/output/errors.csv
+flatforge transform --config samples/config/csv_to_fixed_length.yaml --input samples/input/employee_data.csv --output samples/output/transformed.txt --errors samples/output/errors.csv
 
 # Test processing
-flatforge process --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/processed.csv --error samples/output/errors.csv
+flatforge process --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/processed.csv --errors samples/output/errors.csv
 ```
 
 ### Testing New Features (v0.3.0)
@@ -81,7 +81,7 @@ To test the extended checksum validation features:
 
 ```bash
 # Test multi-column checksum validation with SHA256
-flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_checksum.csv --output samples/output/valid_orders.csv --error samples/output/checksum_errors.csv
+flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_checksum.csv --output samples/output/valid_orders.csv --errors samples/output/checksum_errors.csv
 
 # Run the comprehensive test script for all checksum types (sum, xor, mod10, md5, SHA256)
 python samples/test_new_features_v0.3.0_20250330.py --feature checksum
@@ -99,7 +99,7 @@ python samples/test_checksum.py --type all     # For all checksum types
 To test credit card validation using the Luhn algorithm:
 
 ```bash
-flatforge validate --config samples/config/credit_card_processing.yaml --input samples/input/credit_card_data.csv --output samples/output/valid_cards.csv --error samples/output/card_errors.csv
+flatforge validate --config samples/config/credit_card_processing.yaml --input samples/input/credit_card_data.csv --output samples/output/valid_cards.csv --errors samples/output/card_errors.csv
 
 # Or using the feature test script
 python samples/test_new_features_v0.3.0_20250330.py --feature credit_card
@@ -110,7 +110,7 @@ python samples/test_new_features_v0.3.0_20250330.py --feature credit_card
 To test GUID validation and generation:
 
 ```bash
-flatforge validate --config samples/config/guid_generation.yaml --input samples/input/user_data.csv --output samples/output/users_with_guids.csv --error samples/output/guid_errors.csv
+flatforge validate --config samples/config/guid_generation.yaml --input samples/input/user_data.csv --output samples/output/users_with_guids.csv --errors samples/output/guid_errors.csv
 
 # Or using the feature test script
 python samples/test_new_features_v0.3.0_20250330.py --feature guid
@@ -139,22 +139,22 @@ To test the CLI with sample error files:
 
 ```bash
 # Test date format errors
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/date_format_errors.csv --output samples/output/errors/date_format_valid.csv --error samples/output/errors/date_format_errors.txt
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/date_format_errors.csv --output samples/output/errors/date_format_valid.csv --errors samples/output/errors/date_format_errors.txt
 
 # Test numeric value errors
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/numeric_value_errors.csv --output samples/output/errors/numeric_value_valid.csv --error samples/output/errors/numeric_value_errors.txt
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/numeric_value_errors.csv --output samples/output/errors/numeric_value_valid.csv --errors samples/output/errors/numeric_value_errors.txt
 
 # Test required field errors
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/required_field_errors.csv --output samples/output/errors/required_field_valid.csv --error samples/output/errors/required_field_errors.txt
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/required_field_errors.csv --output samples/output/errors/required_field_valid.csv --errors samples/output/errors/required_field_errors.txt
 
 # Test string length errors
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/string_length_errors.csv --output samples/output/errors/string_length_valid.csv --error samples/output/errors/string_length_errors.txt
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/string_length_errors.csv --output samples/output/errors/string_length_valid.csv --errors samples/output/errors/string_length_errors.txt
 
 # Test mixed errors
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/mixed_errors.csv --output samples/output/errors/mixed_valid.csv --error samples/output/errors/mixed_errors.txt
+flatforge validate --config samples/config/employee_csv.yaml --input samples/input/errors/mixed_errors.csv --output samples/output/errors/mixed_valid.csv --errors samples/output/errors/mixed_errors.txt
 
 # Test fixed-length format errors
-flatforge validate --config samples/config/employee_fixed_length.yaml --input samples/input/errors/fixed_length_errors.txt --output samples/output/errors/fixed_length_valid.txt --error samples/output/errors/fixed_length_errors.txt
+flatforge validate --config samples/config/employee_fixed_length.yaml --input samples/input/errors/fixed_length_errors.txt --output samples/output/errors/fixed_length_valid.txt --errors samples/output/errors/fixed_length_errors.txt
 ```
 
 ### Testing with the Sample Script
@@ -252,13 +252,13 @@ Example:
 flatforge validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv
 
 # Test invalid input file
-flatforge validate --config samples/config/employee_csv.yaml --input nonexistent_file.csv --output samples/output/valid.csv --error samples/output/errors.csv
+flatforge validate --config samples/config/employee_csv.yaml --input nonexistent_file.csv --output samples/output/valid.csv --errors samples/output/errors.csv
 
 # Test invalid configuration file
-flatforge validate --config nonexistent_config.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --error samples/output/errors.csv
+flatforge validate --config nonexistent_config.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --errors samples/output/errors.csv
 
 # Test invalid checksum
-flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_invalid_checksum.csv --output samples/output/valid_orders.csv --error samples/output/checksum_errors.csv
+flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_invalid_checksum.csv --output samples/output/valid_orders.csv --errors samples/output/checksum_errors.csv
 ```
 
 ## Troubleshooting CLI Issues
