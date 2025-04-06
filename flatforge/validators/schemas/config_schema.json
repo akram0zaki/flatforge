@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FlatForge Configuration Schema",
+  "description": "Schema for validating FlatForge configuration files",
+  "type": "object",
+  "required": ["name", "type", "sections"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the file format"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["fixed_length", "delimited"],
+      "description": "The type of file format"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the file format"
+    },
+    "delimiter": {
+      "type": "string",
+      "description": "Field delimiter character (for delimited files)"
+    },
+    "quote_char": {
+      "type": "string",
+      "description": "Quote character for field values (for delimited files)"
+    },
+    "escape_char": {
+      "type": "string",
+      "description": "Escape character (for delimited files)"
+    },
+    "newline": {
+      "type": "string",
+      "description": "Line ending character(s)"
+    },
+    "encoding": {
+      "type": "string",
+      "description": "File encoding"
+    },
+    "skip_blank_lines": {
+      "type": "boolean",
+      "description": "Whether to skip blank lines"
+    },
+    "exit_on_first_error": {
+      "type": "boolean",
+      "description": "Whether to stop processing on the first error"
+    },
+    "trim_whitespace": {
+      "type": "boolean",
+      "description": "Whether to trim whitespace from field values"
+    },
+    "ignore_extra_fields": {
+      "type": "boolean",
+      "description": "Whether to ignore extra fields in records"
+    },
+    "ignore_missing_fields": {
+      "type": "boolean",
+      "description": "Whether to ignore missing fields in records"
+    },
+    "sections": {
+      "type": "array",
+      "description": "List of sections in the file",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "record"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the section"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["header", "body", "footer"],
+            "description": "The type of section"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the section"
+          },
+          "min_records": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Minimum number of records in this section"
+          },
+          "max_records": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Maximum number of records in this section"
+          },
+          "identifier": {
+            "type": "object",
+            "required": ["field", "value"],
+            "properties": {
+              "field": {
+                "type": "string",
+                "description": "The field used to identify the section"
+              },
+              "value": {
+                "type": "string",
+                "description": "The expected value of the field"
+              }
+            }
+          },
+          "record": {
+            "type": "object",
+            "required": ["name", "fields"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the record format"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the record"
+              },
+              "fields": {
+                "type": "array",
+                "description": "List of fields in the record",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["name", "position"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the field"
+                    },
+                    "position": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "The position of the field in the record (0-based)"
+                    },
+                    "length": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "The length of the field (for fixed-length files)"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Description of the field"
+                    },
+                    "rules": {
+                      "type": "array",
+                      "description": "List of rules to apply to this field",
+                      "items": {
+                        "type": "object",
+                        "required": ["type"],
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "description": "The type of rule"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Optional name of the rule"
+                          },
+                          "params": {
+                            "type": "object",
+                            "description": "Optional parameters for the rule"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "global_rules": {
+      "type": "array",
+      "description": "List of global rules to apply to the file",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of global rule"
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional name of the rule"
+          },
+          "params": {
+            "type": "object",
+            "description": "Optional parameters for the rule"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "type": { "enum": ["fixed_length"] } }
+      },
+      "then": {
+        "properties": {
+          "sections": {
+            "items": {
+              "properties": {
+                "record": {
+                  "properties": {
+                    "fields": {
+                      "items": {
+                        "required": ["name", "position", "length"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "enum": ["delimited"] } }
+      },
+      "then": {
+        "required": ["delimiter"]
+      }
+    }
+  ]
+} 

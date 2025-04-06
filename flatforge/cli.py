@@ -4,6 +4,7 @@ import yaml
 from tqdm import tqdm
 from flatforge.core import FileFormat
 from flatforge.processors import ValidationProcessor, ConversionProcessor, CounterProcessor
+from flatforge.validators import ConfigValidator
 
 @click.group()
 def cli():
@@ -48,6 +49,32 @@ def validate(config, input, output, errors, chunk_size, show_progress):
     except Exception as e:
         click.echo(f"Error: {str(e)}", err=True)
         sys.exit(1)
+
+@cli.command()
+@click.option('--config', required=True, help='Path to the configuration file to validate')
+@click.option('--schema', required=False, help='Path to a custom JSON schema file')
+def validate_config(config, schema):
+    """Validate a configuration file without processing any data."""
+    try:
+        click.echo(f"Validating configuration file: {config}")
+        
+        # Create validator
+        validator = ConfigValidator.from_file(config)
+        
+        # Validate the configuration
+        is_valid = validator.validate()
+        
+        if is_valid:
+            click.secho("✓ Configuration is valid!", fg="green")
+            return 0
+        else:
+            click.secho("✗ Configuration contains errors:", fg="red")
+            for i, error in enumerate(validator.errors, 1):
+                click.echo(f"  {i}. {error}")
+            return 1
+    except Exception as e:
+        click.secho(f"Error: {str(e)}", fg="red", err=True)
+        return 1
 
 @cli.command()
 @click.option('--input-config', required=True, help='Path to the input configuration file')
