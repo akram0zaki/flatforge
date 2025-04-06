@@ -91,10 +91,11 @@ def validate_config(config, schema):
             click.secho("✗ Configuration contains errors:", fg="red")
             for i, error in enumerate(validator.errors, 1):
                 click.echo(f"  {i}. {error}")
-            return 1
+            # Use sys.exit(1) instead of return 1 to ensure proper exit code in both CLI and tests
+            sys.exit(1)
     except Exception as e:
         click.secho(f"Error: {str(e)}", fg="red", err=True)
-        return 1
+        sys.exit(1)
 
 
 @main.command()

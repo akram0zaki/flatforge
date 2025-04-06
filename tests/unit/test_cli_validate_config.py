@@ -74,7 +74,6 @@ class TestValidateConfigCommand(unittest.TestCase):
         except Exception as e:
             print(f"Error cleaning up temp file: {e}")
 
-    @unittest.skip("Skipping CLI test due to module import issues - core functionality already tested directly")
     @patch('flatforge.validators.ConfigValidator')
     def test_validate_config_with_mocks(self, mock_validator_class):
         """Test the CLI validation command using mocks."""
@@ -106,26 +105,28 @@ class TestValidateConfigCommand(unittest.TestCase):
         mock_validator.validate.return_value = False
         mock_validator.errors = ["Error 1", "Error 2"]
         
-        # Run the command with an invalid config
-        result = runner.invoke(main, ['validate-config', '--config', self.invalid_config_path])
+        # Run the command with an invalid config using catch_exceptions=False
+        # to let Click handle the sys.exit and convert it to the appropriate exit code
+        result = runner.invoke(main, ['validate-config', '--config', self.invalid_config_path], catch_exceptions=False)
         
         # Log the result for debugging
         print(f"CLI result (invalid): {result.exit_code} - {result.output}")
         
         # Assertions for invalid config
-        self.assertNotEqual(0, result.exit_code, "Invalid config should not return success")
+        self.assertEqual(1, result.exit_code, "Invalid config should return error (1)")
+        self.assertIn("errors", result.output.lower(), "Output should indicate config has errors")
         
         # Test case 3: Non-existent file
         mock_validator_class.from_file.side_effect = FileNotFoundError("File not found")
         
         # Run the command with a non-existent file
-        result = runner.invoke(main, ['validate-config', '--config', 'nonexistent.yaml'])
+        result = runner.invoke(main, ['validate-config', '--config', 'nonexistent.yaml'], catch_exceptions=False)
         
         # Log the result for debugging
         print(f"CLI result (nonexistent): {result.exit_code} - {result.output}")
         
         # Assertions for nonexistent file
-        self.assertNotEqual(0, result.exit_code, "Non-existent file should not return success")
+        self.assertEqual(1, result.exit_code, "Non-existent file should return error (1)")
         self.assertIn("error", result.output.lower(), "Output should mention error")
         
     def test_validator_functionality(self):
