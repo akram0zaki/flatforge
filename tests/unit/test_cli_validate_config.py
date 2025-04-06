@@ -88,7 +88,8 @@ class TestValidateConfigCommand(unittest.TestCase):
         except Exception as e:
             print(f"Error cleaning up temp file: {e}")
 
-    @patch('flatforge.validators.ConfigValidator')
+    # Patch the validator module where it's imported in main.py, not the class directly
+    @patch('flatforge.cli.main.ConfigValidator')
     def test_validate_config_with_mocks(self, mock_validator_class):
         """Test the CLI validation command using mocks."""
         # We'll mock the ConfigValidator class and its methods
@@ -126,6 +127,9 @@ class TestValidateConfigCommand(unittest.TestCase):
         self.assertEqual(1, result.exit_code, "Invalid config should return error (1)")
         self.assertIn("errors", result.output.lower(), "Output should indicate config has errors")
         
+        # Reset the mock for the next test
+        mock_validator_class.reset_mock()
+        
         # Test case 3: Non-existent file
         mock_validator_class.from_file.side_effect = FileNotFoundError("File not found")
         
@@ -136,9 +140,12 @@ class TestValidateConfigCommand(unittest.TestCase):
         self.assertEqual(1, result.exit_code, "Non-existent file should return error (1)")
         self.assertIn("error", result.output.lower(), "Output should mention error")
         
+        # Reset the mock and side effect for the next test
+        mock_validator_class.reset_mock()
+        mock_validator_class.from_file.side_effect = None
+        
         # Test case 4: With custom schema
         # Reset side effect and set up for success case
-        mock_validator_class.from_file.side_effect = None
         mock_validator_class.from_file.return_value = mock_validator
         mock_validator.validate.return_value = True
         mock_validator.errors = []
