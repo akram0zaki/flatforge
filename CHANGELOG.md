@@ -42,11 +42,18 @@ All notable changes to the FlatForge project will be documented in this file.
 - Refactored validation rules into individual modules for better modularity
 - Enhanced NumericRule documentation to clearly describe min_value, max_value, and decimal_precision parameters
 - Improved validation rule organization by moving each rule to its own file
+- Consolidated CLI structure by moving all command functionality to `flatforge.cli` package:
+  - Removed standalone `cli.py` module to fix import conflicts
+  - Updated `flatforge.cli.main` to be the single entry point for all CLI commands 
+  - Modified entry point in `setup.py` to use `flatforge.cli.main:main`
+  - Added proper `__main__.py` for direct execution via `python -m flatforge`
+  - Fixed test code that was affected by CLI structure changes
 
 ### Fixed
 - Bug in date format validation that caused incorrect error messages
 - Issue with string length validation when processing non-ASCII characters
 - Performance issue when processing large files with multiple validation rules
+- Fixed import conflicts between `flatforge/cli.py` and `flatforge/cli/__init__.py`
 
 ## [0.3.2] - 2025-04-01
 

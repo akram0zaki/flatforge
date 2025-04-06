@@ -89,11 +89,11 @@ class TestValidateConfigCommand(unittest.TestCase):
         # Use Click's CliRunner for testing commands
         runner = CliRunner()
         
-        # Import the cli object from the module
-        from flatforge.cli import cli
+        # Import the main function from the module
+        from flatforge.cli.main import main
         
         # Run the command with a valid config
-        result = runner.invoke(cli, ['validate_config', '--config', self.valid_config_path])
+        result = runner.invoke(main, ['validate-config', '--config', self.valid_config_path])
         
         # Log the result for debugging
         print(f"CLI result (valid): {result.exit_code} - {result.output}")
@@ -107,7 +107,7 @@ class TestValidateConfigCommand(unittest.TestCase):
         mock_validator.errors = ["Error 1", "Error 2"]
         
         # Run the command with an invalid config
-        result = runner.invoke(cli, ['validate_config', '--config', self.invalid_config_path])
+        result = runner.invoke(main, ['validate-config', '--config', self.invalid_config_path])
         
         # Log the result for debugging
         print(f"CLI result (invalid): {result.exit_code} - {result.output}")
@@ -119,7 +119,7 @@ class TestValidateConfigCommand(unittest.TestCase):
         mock_validator_class.from_file.side_effect = FileNotFoundError("File not found")
         
         # Run the command with a non-existent file
-        result = runner.invoke(cli, ['validate_config', '--config', 'nonexistent.yaml'])
+        result = runner.invoke(main, ['validate-config', '--config', 'nonexistent.yaml'])
         
         # Log the result for debugging
         print(f"CLI result (nonexistent): {result.exit_code} - {result.output}")
