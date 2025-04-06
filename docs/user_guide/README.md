@@ -399,4 +399,3 @@ For a detailed and comprehensive guide on configuration file structure, supporte
 
 For information on validating your configuration files, please refer to the [Configuration Validation Guide](configuration_validation.md).
 
-Here's a brief overview of the key components: 

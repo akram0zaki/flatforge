@@ -66,7 +66,7 @@ The validator performs two types of validations:
    - Checking sections for correct constraints (e.g., min_records ≤ max_records)
    - Validating global rule parameters
    - Ensuring field references in global rules point to existing fields
-
+ 
 ## Common Validation Errors
 
 ### Schema Validation Errors

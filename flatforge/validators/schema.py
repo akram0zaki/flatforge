@@ -52,4 +52,4 @@ class SchemaValidator:
             # Catch any other validation errors
             errors.append(f"Schema validation error: {str(e)}")
             
-        return errors 
+        return errors
