@@ -5,6 +5,14 @@ All notable changes to the FlatForge project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Configuration validation system with JSON schema and domain-specific rules:
+  - Schema validation using JSON Schema standard
+  - Domain-specific validation for field positions, uniqueness, etc. 
+  - CLI command `validate_config` to validate configuration files
+  - Programmatic validation through `ConfigValidator` class
+  - Built-in schema for configuration files
+  - Documentation for configuration validation in `docs/user_guide`
+  - Option to validate configuration in `FileFormat.from_yaml` method
 - Extended checksum validation with support for multiple algorithms:
   - SHA256 algorithm for enhanced security
   - Multi-column checksum validation
@@ -23,6 +31,9 @@ All notable changes to the FlatForge project will be documented in this file.
 - Enhanced CLI documentation and examples
 
 ### Changed
+- Updated `FileFormat.from_yaml` to optionally validate configuration before parsing
+- Improved error handling for configuration validation
+- Enhanced documentation with configuration validation details
 - Improved error handling for validation rules
 - Enhanced unit test coverage for all validation types
 - Optimized checksum calculation performance
