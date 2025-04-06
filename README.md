@@ -72,10 +72,11 @@ print(f"Processed {result.total_records} records with {result.error_count} error
 For detailed documentation, please refer to:
 
 - [User Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/user_guide/README.md): How to use FlatForge
+- [Configuration Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/user_guide/configuration_guide.md): Detailed explanation of configuration file structure and options
+- [Rules Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/user_guide/rules_guide.md): Comprehensive guide to all validation rules
 - [Developer Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/developer_guide/README.md): How to extend FlatForge
 - [Architecture](https://github.com/akram0zaki/flatforge/blob/master/docs/architecture/README.md): Design and architecture of FlatForge
 - [Testing Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/testing/README.md): How to test FlatForge and write new tests
-- [Rules Guide](https://github.com/akram0zaki/flatforge/blob/master/docs/user_guide/rules_guide.md): Comprehensive guide to all validation rules
 
 ## Changelog
 

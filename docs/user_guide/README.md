@@ -98,6 +98,10 @@ When processing large files, consider the following:
 
 FlatForge uses YAML or JSON configuration files to define the structure of flat files and the rules to apply to each field.
 
+For a detailed and comprehensive guide on configuration file structure, supported formats, and all available settings, please refer to the [Configuration Guide](configuration_guide.md).
+
+Here's a brief overview of the key components:
+
 ### File Format
 
 A configuration file defines a file format with the following properties:
