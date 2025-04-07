@@ -4,11 +4,26 @@ This document provides examples of how to use the FlatForge command-line interfa
 
 ## Basic CLI Commands
 
-FlatForge provides three main commands:
+FlatForge provides four main commands:
 
 1. `validate`: Validate a file against a schema
-2. `convert`: Convert a file from one format to another
-3. `count`: Count records in a file
+2. `validate-config`: Validate a configuration file
+3. `convert`: Convert a file from one format to another
+4. `count`: Count records in a file
+
+## Configuration Validation Examples
+
+### Validating a Configuration File
+
+```bash
+flatforge validate-config --config schema.yaml
+```
+
+### Validating a Configuration File with Custom Schema
+
+```bash
+flatforge validate-config --config schema.yaml --schema custom_schema.json
+```
 
 ## Validation Examples
 

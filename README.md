@@ -34,20 +34,22 @@ flatforge convert --config mapping.yaml --input data.csv --output converted.txt
 
 # Process a large file with chunked processing and progress reporting
 flatforge validate --config schema.yaml --input large_data.csv --output valid.csv --errors errors.csv --chunk-size 10000 --show-progress
+
+# Validate a configuration file
+flatforge validate-config --config schema.yaml
 ```
 
 ### Programmatic Usage
 
 ```python
+from flatforge.core import FileFormat
 from flatforge.processors import ValidationProcessor
-from flatforge.parsers import ConfigParser
 
-# Parse the configuration
-config_parser = ConfigParser.from_file("schema.yaml")
-config = config_parser.parse()
+# Load configuration with optional validation
+file_format = FileFormat.from_yaml("schema.yaml", validate=True)
 
 # Create a processor
-processor = ValidationProcessor(config)
+processor = ValidationProcessor(file_format)
 
 # Process the file
 result = processor.process("data.csv", "valid.csv", "errors.csv")

@@ -274,11 +274,3 @@ class YamlConfigParser(ConfigParser):
             
         return self._parse_file_format(self.config)
 
-
-def parse_config(config_path):
-    # ... existing code ...
-    
-    # Add file_settings extraction
-    config_data['file_settings'] = yaml_data.get('file_settings', {})
-    
-    # ... rest of the function ... 

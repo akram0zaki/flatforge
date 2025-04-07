@@ -4,6 +4,7 @@
 
 - [Introduction](#introduction)
 - [Configuration File Structure](#configuration-file-structure)
+- [Configuration Validation](#configuration-validation)
 - [Supported File Formats](#supported-file-formats)
 - [File-Level Settings](#file-level-settings)
 - [Section-Level Settings](#section-level-settings)
@@ -50,6 +51,106 @@ global_rules:
   - type: rule_type
     # Global rule parameters
 ```
+
+## Configuration Validation
+
+FlatForge provides built-in validation for configuration files using JSON Schema. This ensures that your configuration files are structurally correct and contain all required settings.
+
+### Using Configuration Validation
+
+You can validate your configuration files in two ways:
+
+1. Using the CLI:
+```bash
+flatforge validate-config --config schema.yaml
+```
+
+2. Using a custom schema:
+```bash
+flatforge validate-config --config schema.yaml --schema custom_schema.json
+```
+
+### JSON Schema Structure
+
+The default JSON schema for FlatForge configuration files defines the following structure:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["name", "type", "sections"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the file format"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["fixed_length", "delimited"],
+      "description": "Type of file format"
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "record"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the section"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["header", "body", "footer"],
+            "description": "Type of section"
+          },
+          "record": {
+            "type": "object",
+            "required": ["name", "fields"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the record"
+              },
+              "fields": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["name", "position"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the field"
+                    },
+                    "position": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Position of the field in the record"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Validation Errors
+
+When validation fails, FlatForge provides detailed error messages that help identify the exact issues in your configuration. Common validation errors include:
+
+- Missing required properties
+- Invalid property types
+- Invalid enum values
+- Invalid field positions
+- Missing required fields in records
+- Invalid section types
 
 ## Supported File Formats
 
