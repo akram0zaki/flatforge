@@ -11,6 +11,7 @@ Error handling is a critical aspect of FlatForge, as it ensures that the library
 - Required field errors
 - String length errors
 - Mixed errors (multiple error types in a single file)
+- Configuration validation errors
 
 ## Test Files
 
@@ -21,6 +22,7 @@ The error handling tests are located in the `tests/unit/error_handling/` directo
 - `test_required_field_errors.py`: Tests for required field validation errors
 - `test_string_length_errors.py`: Tests for string length validation errors
 - `test_mixed_errors.py`: Tests for handling multiple types of errors in a single file
+- `test_config_errors.py`: Tests for configuration validation errors
 - `test_sample_files.py`: Tests that use the sample error files in the workspace
 
 ## Sample Error Files
@@ -33,6 +35,7 @@ FlatForge includes a set of sample files for testing error handling. These files
 - `string_length_errors.csv`: Contains records with string length errors
 - `mixed_errors.csv`: Contains records with multiple types of errors
 - `fixed_length_errors.txt`: Contains records with errors specific to fixed-length formats
+- `invalid_config.yaml`: Contains configuration validation errors
 
 ### Date Format Errors
 
@@ -163,6 +166,158 @@ Error details:
 - Record 5: Negative salary
 - Record 6: Non-numeric manager ID
 - Record 7: Non-numeric employee count
+
+### Configuration Validation Errors
+
+The `invalid_config.yaml` file contains various configuration validation errors:
+
+```yaml
+name: Employee Data
+type: delimited
+description: Employee data in CSV format
+delimiter: ","
+quote_char: "\""
+escape_char: "\\"
+newline: "\n"
+encoding: utf-8
+skip_blank_lines: true
+exit_on_first_error: false
+
+sections:
+  - name: header
+    type: header
+    min_records: 1
+    max_records: 1
+    record:
+      name: header_record
+      fields:
+        - name: record_type
+          position: 0
+          rules:
+            - type: required
+            - type: choice
+              params:
+                choices: ["HDR", "TRL"]  # Invalid choice values
+        - name: batch_reference
+          position: 1
+          rules:
+            - type: required
+            - type: string_length
+              params:
+                min_length: 1
+                max_length: 20
+        - name: timestamp
+          position: 2
+          rules:
+            - type: required
+            - type: date
+              params:
+                format: "%Y%m%d%H%M%S"
+  - name: body
+    type: body
+    min_records: 0
+    max_records: 1000
+    record:
+      name: employee_record
+      fields:
+        - name: record_type
+          position: 0
+          rules:
+            - type: required
+            - type: choice
+              params:
+                choices: ["D"]  # Missing valid choice
+        - name: employee_id
+          position: 1
+          rules:
+            - type: required
+            - type: numeric
+              params:
+                min_value: 1000
+                max_value: 9999
+        - name: employee_name
+          position: 2
+          rules:
+            - type: required
+            - type: string_length
+              params:
+                min_length: 1
+                max_length: 50
+        - name: date_of_birth
+          position: 3
+          rules:
+            - type: date
+              params:
+                format: "%Y%m%d"
+        - name: country_code
+          position: 4
+          rules:
+            - type: string_length
+              params:
+                min_length: 2
+                max_length: 2
+        - name: salary
+          position: 5
+          rules:
+            - type: numeric
+              params:
+                min_value: 0
+                max_value: 1000000
+                decimal_precision: 2
+        - name: manager_id
+          position: 6
+          rules:
+            - type: numeric
+              params:
+                min_value: 1000
+                max_value: 9999
+        - name: manager_name
+          position: 7
+          rules:
+            - type: string_length
+              params:
+                min_length: 1
+                max_length: 50
+  - name: footer
+    type: footer
+    min_records: 1
+    max_records: 1
+    record:
+      name: footer_record
+      fields:
+        - name: record_type
+          position: 0
+          rules:
+            - type: required
+            - type: choice
+              params:
+                choices: ["F"]
+        - name: total_salary
+          position: 1
+          rules:
+            - type: required
+            - type: numeric
+              params:
+                min_value: 0
+                max_value: 10000000
+                decimal_precision: 2
+        - name: employee_count
+          position: 2
+          rules:
+            - type: required
+            - type: numeric
+              params:
+                min_value: 0
+                max_value: 1000
+                decimal_precision: 0
+```
+
+Error details:
+- Invalid choice values in header record type
+- Missing valid choice in body record type
+- Missing required fields in some sections
+- Invalid field positions
+- Invalid rule parameters
 
 ## Running the Tests
 

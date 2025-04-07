@@ -11,6 +11,7 @@ The FlatForge CLI provides a command-line interface for validating, transforming
 FlatForge provides the following CLI commands:
 
 - `validate`: Validates a file against a configuration
+- `validate-config`: Validates a configuration file against the JSON schema
 - `transform`: Transforms a file from one format to another
 - `process`: Processes a file (validates and transforms)
 
@@ -27,6 +28,17 @@ Parameters:
 - `--input`: Path to the input file
 - `--output`: Path to the output file (for valid records)
 - `--error`: Path to the error file (for error details)
+
+### Validate-Config Command
+
+The `validate-config` command validates a configuration file against the JSON schema:
+
+```bash
+flatforge validate-config --config <config_file>
+```
+
+Parameters:
+- `--config`: Path to the configuration file (YAML or JSON)
 
 ### Transform Command
 
@@ -63,7 +75,10 @@ Parameters:
 To test the basic functionality of the CLI:
 
 ```bash
-# Test validation
+# Test configuration validation
+flatforge validate-config --config samples/config/employee_csv.yaml
+
+# Test file validation
 flatforge validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --errors samples/output/errors.csv
 
 # Test transformation
@@ -71,6 +86,21 @@ flatforge transform --config samples/config/csv_to_fixed_length.yaml --input sam
 
 # Test processing
 flatforge process --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv --output samples/output/processed.csv --errors samples/output/errors.csv
+```
+
+### Testing Configuration Validation
+
+To test the configuration validation feature:
+
+```bash
+# Test valid configuration
+flatforge validate-config --config samples/config/employee_csv.yaml
+
+# Test invalid configuration
+flatforge validate-config --config samples/config/invalid_config.yaml
+
+# Test with JSON configuration
+flatforge validate-config --config samples/config/employee_json.json
 ```
 
 ### Testing New Features (v0.3.0)
@@ -189,6 +219,19 @@ class TestCLI(unittest.TestCase):
         for file in os.listdir(self.output_dir):
             os.remove(os.path.join(self.output_dir, file))
             
+    def test_validate_config_command(self):
+        # Test validate-config command
+        config_file = os.path.join(self.config_dir, "employee_csv.yaml")
+        
+        # Run the command
+        result = subprocess.run([
+            "flatforge", "validate-config",
+            "--config", config_file
+        ], capture_output=True, text=True)
+        
+        # Check the result
+        self.assertEqual(result.returncode, 0)
+        
     def test_validate_command(self):
         # Test validate command
         config_file = os.path.join(self.config_dir, "employee_csv.yaml")
@@ -232,7 +275,6 @@ class TestCLI(unittest.TestCase):
         self.assertTrue(os.path.exists(error_file))
         
     # Add more test methods for other commands and scenarios
-```
 
 ## Testing CLI Error Handling
 
@@ -244,21 +286,19 @@ To test how the CLI handles errors:
 4. **Permission Issues**: Test what happens when output files can't be written due to permission issues
 5. **Invalid Checksums**: Test what happens when checksums don't match expected values
 6. **Invalid GUIDs**: Test what happens when GUIDs don't conform to the expected format
+7. **Invalid Schema**: Test what happens when configuration files don't conform to the JSON schema
 
 Example:
 
 ```bash
-# Test missing parameters
-flatforge validate --config samples/config/employee_csv.yaml --input samples/input/employee_data.csv
+# Test missing config parameter
+flatforge validate-config
 
-# Test invalid input file
-flatforge validate --config samples/config/employee_csv.yaml --input nonexistent_file.csv --output samples/output/valid.csv --errors samples/output/errors.csv
+# Test invalid config file
+flatforge validate-config --config non_existent.yaml
 
-# Test invalid configuration file
-flatforge validate --config nonexistent_config.yaml --input samples/input/employee_data.csv --output samples/output/valid.csv --errors samples/output/errors.csv
-
-# Test invalid checksum
-flatforge validate --config samples/config/multi_column_checksum.yaml --input samples/input/orders_with_invalid_checksum.csv --output samples/output/valid_orders.csv --errors samples/output/checksum_errors.csv
+# Test invalid schema
+flatforge validate-config --config samples/config/invalid_schema.yaml
 ```
 
 ## Troubleshooting CLI Issues

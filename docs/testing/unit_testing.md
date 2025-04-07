@@ -205,24 +205,28 @@ The core models tests verify that the core models work correctly:
 - `Field`: Tests for field creation, validation, and transformation
 - `ValidationResult`: Tests for validation result creation and manipulation
 - `ProcessingResult`: Tests for processing result creation and manipulation
+- `ConfigValidator`: Tests for configuration validation against JSON schema
 
 Example:
 
 ```python
-def test_record_validation(self):
-    """Test record validation with a valid record."""
-    # Create a record
-    record = Record("D", self.record_data)
-    
+def test_config_validation(self):
+    """Test configuration validation with a valid configuration."""
     # Create a validator
-    validator = RecordValidator(self.file_format)
+    validator = ConfigValidator()
     
-    # Validate the record
-    validation_result = validator.validate(record)
+    # Validate a valid configuration
+    config_path = "samples/config/employee_csv.yaml"
+    validator.validate_file(config_path)  # Should not raise
     
-    # Check the validation result
-    self.assertTrue(validation_result.is_valid)
-    self.assertEqual(len(validation_result.errors), 0)
+    # Validate an invalid configuration
+    invalid_config_path = "samples/config/invalid_config.yaml"
+    with self.assertRaises(ConfigError):
+        validator.validate_file(invalid_config_path)
+        
+    # Validate with JSON configuration
+    json_config_path = "samples/config/employee_json.json"
+    validator.validate_file(json_config_path)  # Should not raise
 ```
 
 ### Validators Tests
@@ -232,35 +236,32 @@ The validators tests verify that the validators work correctly:
 - `FieldValidator`: Tests for field validation
 - `RecordValidator`: Tests for record validation
 - `FileValidator`: Tests for file validation
+- `ConfigValidator`: Tests for configuration validation
 
 Example:
 
 ```python
-def test_required_field_validation(self):
-    """Test required field validation."""
-    # Create a field with a required value
-    field = Field("employee_id", "1001", {"required": True})
-    
+def test_config_validator(self):
+    """Test configuration validator."""
     # Create a validator
-    validator = FieldValidator()
+    validator = ConfigValidator()
     
-    # Validate the field
-    validation_result = validator.validate(field)
+    # Test valid configuration
+    config_path = "samples/config/employee_csv.yaml"
+    validator.validate_file(config_path)  # Should not raise
     
-    # Check the validation result
-    self.assertTrue(validation_result.is_valid)
-    self.assertEqual(len(validation_result.errors), 0)
+    # Test invalid configuration
+    invalid_config_path = "samples/config/invalid_config.yaml"
+    with self.assertRaises(ConfigError) as context:
+        validator.validate_file(invalid_config_path)
     
-    # Create a field with a missing required value
-    field = Field("employee_id", "", {"required": True})
+    # Check error details
+    self.assertIn("Invalid configuration", str(context.exception))
+    self.assertIn("required field", str(context.exception))
     
-    # Validate the field
-    validation_result = validator.validate(field)
-    
-    # Check the validation result
-    self.assertFalse(validation_result.is_valid)
-    self.assertEqual(len(validation_result.errors), 1)
-    self.assertEqual(validation_result.errors[0].error_type, "REQUIRED_FIELD")
+    # Test JSON configuration
+    json_config_path = "samples/config/employee_json.json"
+    validator.validate_file(json_config_path)  # Should not raise
 ```
 
 ## Error Handling Tests
