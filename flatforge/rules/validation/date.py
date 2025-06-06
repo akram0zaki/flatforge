@@ -42,8 +42,15 @@ class DateRule(ValidationRule):
         Raises:
             ValidationError: If the date is invalid or out of range
         """
+        value = str(field_value.value)
+
+        # Skip validation for empty values.  The RequiredRule should be used if
+        # the field must contain a value.
+        if value == "":
+            return
+
         try:
-            date = datetime.datetime.strptime(str(field_value.value), self.format).date()
+            date = datetime.datetime.strptime(value, self.format).date()
             
             if self.min_date and date < self.min_date:
                 raise ValidationError(
