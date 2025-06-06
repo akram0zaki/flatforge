@@ -37,6 +37,12 @@ class StringLengthRule(ValidationRule):
             ValidationError: If the field length is invalid
         """
         value = str(field_value.value)
+
+        # Skip validation for empty values.  If the field must not be empty
+        # a RequiredRule should be used in addition to this rule.
+        if value == "":
+            return
+
         length = len(value)
         
         if self.exact_length is not None and length != self.exact_length:
